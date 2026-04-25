@@ -7,11 +7,11 @@ import Spinner from "../components/Spinner.js";
 import LevelAuthors from "../components/List/LevelAuthors.js";
 
 const roleIconMap = {
-    owner: "aeb/crown",
-    admin: "aeb/user-gear",
-    helper: "aeb/user-shield",
-    dev: "aeb/code",
-    trial: "aeb/user-lock",
+    owner: "crown",
+    admin: "user-gear",
+    helper: "user-shield",
+    dev: "code",
+    trial: "user-lock",
 };
 
 export default {
