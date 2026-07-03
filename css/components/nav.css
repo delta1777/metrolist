@@ -18,8 +18,12 @@
     left: 0;
     width: 0;
     height: 4px;
-    background: linear-gradient(90deg, #00d4ff, #ffffff);
+    background: linear-gradient(90deg, #ffffff, #e0e0e0);
     transition: width 0.3s ease;
+}
+
+header.dark .nav .nav__tab::after {
+    background: linear-gradient(90deg, #ffffff, #cccccc);
 }
 .nav .nav__tab.router-link-active::after,
 .nav .nav__tab:hover::after {

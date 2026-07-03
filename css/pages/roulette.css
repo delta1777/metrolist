@@ -78,28 +78,45 @@
 }
 .page-roulette .levels .level .actions {
     grid-column: 1 / span 2;
-    background: linear-gradient(135deg, #1b314f 0%, #2a4365 100%);
+    background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
     margin: 0;
     padding: 1rem;
     display: flex;
     gap: 1rem;
 }
+
+main.dark .page-roulette .levels .level .actions {
+    background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+}
+
 .page-roulette .levels .level .actions input[type="number"] {
     border: none;
     border-radius: 12px;
     padding: 0.9rem;
-    background-color: #475a7b;
+    background-color: #2a2a2a;
     flex: 1;
     color: white;
     transition: var(--transition);
 }
+
+main.dark .page-roulette .levels .level .actions input[type="number"] {
+    background-color: #1a1a1a;
+    border: 1px solid #333333;
+}
+
 .page-roulette .levels .level .actions input[type="number"]:focus {
     outline: none;
-    background-color: #5a6f94;
-    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.3);
+    background-color: #3a3a3a;
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.2);
 }
+
+main.dark .page-roulette .levels .level .actions input[type="number"]:focus {
+    background-color: #2a2a2a;
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.3);
+}
+
 .page-roulette .levels .level .actions input[type="number"]::placeholder {
-    color: #7487aa;
+    color: #888888;
 }
 .page-roulette .levels .results {
     display: flex;
@@ -128,13 +145,19 @@
 }
 .page-roulette .toast {
     display: flex;
-    background: linear-gradient(135deg, #ff6b6b 0%, #d50000 100%);
+    background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%);
     color: white;
     padding: 1.25rem;
     border-radius: var(--border-radius);
     box-shadow: var(--shadow-md);
     animation: slideIn 0.4s ease-out;
     transition: var(--transition);
+    border: 1px solid #ff6b6b;
+}
+
+main.dark .page-roulette .toast {
+    background: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%);
+    border: 1px solid #ff4444;
 }
 .page-roulette .toast:hover {
     transform: translateX(-4px);
