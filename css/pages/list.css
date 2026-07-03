@@ -61,9 +61,12 @@
 }
 .page-list .list .level.active button {
     background: var(--color-primary);
-    color: #2c3e50;
+    color: var(--color-on-primary);
     box-shadow: var(--shadow-lg);
     transform: scale(1.02);
+}
+.page-list .list .level.active button {
+    color: #2c3e50;
 }
 main.dark .page-list .list .level.active button {
     color: white;
