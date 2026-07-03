@@ -36,6 +36,11 @@ header.dark .nav .nav__tab::after {
     border-color: transparent;
     transform: translateY(-2px);
 }
+header:not(.dark) .nav .nav__tab,
+header:not(.dark) .nav .nav__tab:hover,
+header:not(.dark) .nav .nav__tab span {
+    color: #000000 !important;
+}
 .nav .nav__actions {
     flex: 1;
     display: flex;
