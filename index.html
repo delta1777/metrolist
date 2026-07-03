@@ -23,6 +23,11 @@
             type="text/css"
             href="css/pages/leaderboard.css"
         />
+        <link
+            rel="stylesheet"
+            type="text/css"
+            href="css/pages/future-list.css"
+        />
         <link rel="stylesheet" type="text/css" href="css/components/nav.css" />
         <link rel="stylesheet" type="text/css" href="css/components/btn.css" />
         <link
@@ -39,7 +44,7 @@
         <header :class="{ dark: store.dark }">
             <div class="logo">
                 <h2>Metro DemonList</h2>
-                <p>v2.0</p>
+                <p>v3.0</p>
             </div>
             <nav class="nav">
                 <router-link class="nav__tab" to="/">
@@ -47,6 +52,9 @@
                 </router-link>
                 <router-link class="nav__tab" to="/leaderboard">
                     <span class="type-label-lg">Leaderboard</span>
+                </router-link>
+                <router-link class="nav__tab" to="/future-list">
+                    <span class="type-label-lg">Future List</span>
                 </router-link>
                 <div class="nav__actions">
                     <button
