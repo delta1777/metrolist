@@ -1,18 +1,9 @@
 [
     {
         "id": 1,
-        "name": "Example Level",
-        "creator": "Creator Name",
-        "verifier": "Verifier Name",
-        "showcase": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-        "progress": 87
-    },
-    {
-        "id": 2,
-        "name": "Another Level",
-        "creator": "Another Creator",
-        "verifier": "",
-        "showcase": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-        "progress": 65
+        "name": "Elite Titan B",
+        "creator": "deh8",
+        "verifier": "deh8",
+        "showcase": "https://www.youtube.com/watch?v=CJ4FO3DNdH8",
+        "progress": 43
     }
-]
