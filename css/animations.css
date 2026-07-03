@@ -1,0 +1,129 @@
+/* Fade in animation for page load */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+/* Slide up animation */
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Scale in animation */
+@keyframes scaleIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Pulse animation for important elements */
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+}
+
+/* Gradient animation */
+@keyframes gradientShift {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+/* Apply animations to elements */
+main {
+    animation: fadeIn 0.5s ease-out;
+}
+
+.page-list .list tr {
+    animation: slideUp 0.4s ease-out;
+    animation-fill-mode: both;
+}
+
+.page-list .list tr:nth-child(1) { animation-delay: 0.05s; }
+.page-list .list tr:nth-child(2) { animation-delay: 0.1s; }
+.page-list .list tr:nth-child(3) { animation-delay: 0.15s; }
+.page-list .list tr:nth-child(4) { animation-delay: 0.2s; }
+.page-list .list tr:nth-child(5) { animation-delay: 0.25s; }
+.page-list .list tr:nth-child(6) { animation-delay: 0.3s; }
+.page-list .list tr:nth-child(7) { animation-delay: 0.35s; }
+.page-list .list tr:nth-child(8) { animation-delay: 0.4s; }
+.page-list .list tr:nth-child(9) { animation-delay: 0.45s; }
+.page-list .list tr:nth-child(10) { animation-delay: 0.5s; }
+
+/* Rank badges for top 3 */
+.page-list .list tr:nth-child(1) .rank,
+.page-leaderboard .board tr:nth-child(1) .rank {
+    color: #ffd700;
+    font-weight: bold;
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+}
+
+.page-list .list tr:nth-child(2) .rank,
+.page-leaderboard .board tr:nth-child(2) .rank {
+    color: #c0c0c0;
+    font-weight: bold;
+    text-shadow: 0 0 10px rgba(192, 192, 192, 0.5);
+}
+
+.page-list .list tr:nth-child(3) .rank,
+.page-leaderboard .board tr:nth-child(3) .rank {
+    color: #cd7f32;
+    font-weight: bold;
+    text-shadow: 0 0 10px rgba(205, 127, 50, 0.5);
+}
+
+/* Smooth scrollbar */
+::-webkit-scrollbar {
+    width: 12px;
+    height: 12px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--color-background);
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 10px;
+    transition: var(--transition);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+}
+
+/* Link hover effects */
+a {
+    transition: var(--transition);
+}
+
+a:hover {
+    color: var(--color-accent);
+}

@@ -24,12 +24,29 @@
     background-color: var(--color-background);
     color: var(--color-on-background);
     border: none;
-    border-radius: 0.5rem;
-    padding: 1rem;
+    border-radius: var(--border-radius);
+    padding: 1.25rem;
     text-align: start;
     word-break: normal;
     overflow-wrap: anywhere;
     cursor: pointer;
+    transition: var(--transition);
+    box-shadow: var(--shadow-sm);
+    position: relative;
+    overflow: hidden;
+}
+.page-list .list .level button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s;
+}
+.page-list .list .level button:hover::before {
+    left: 100%;
 }
 .page-list .list .level.error button {
     color: var(--color-error);
@@ -39,10 +56,14 @@
 .page-list .list .level button:hover {
     background-color: var(--color-background-hover);
     color: var(--color-on-background-hover);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
 }
 .page-list .list .level.active button {
-    background-color: var(--color-primary);
+    background: var(--color-primary);
     color: var(--color-on-primary);
+    box-shadow: var(--shadow-lg);
+    transform: scale(1.02);
 }
 .page-list .level-container .level {
     display: flex;
@@ -59,6 +80,14 @@
 }
 .page-list .level-container .level .video {
     aspect-ratio: 16/9;
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    box-shadow: var(--shadow-lg);
+    transition: var(--transition);
+}
+.page-list .level-container .level .video:hover {
+    transform: scale(1.02);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
 }
 .page-list .level-container .level .stats {
     display: flex;
@@ -71,6 +100,15 @@
     flex-direction: column;
     align-items: center;
     gap: 1rem;
+    padding: 1.5rem;
+    background: var(--color-background);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-sm);
+    transition: var(--transition);
+}
+.page-list .level-container .level .stats li:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-md);
 }
 .page-list .level-container .level .records {
     table-layout: fixed;
@@ -105,10 +143,23 @@
     gap: 1rem;
 }
 .page-list .meta .errors .error {
-    padding: 1rem;
-    background-color: var(--color-error);
+    padding: 1.25rem;
+    background: var(--color-error);
     color: var(--color-on-error);
-    border-radius: 0.5rem;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-md);
+    animation: slideIn 0.4s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
 }
 .page-list .meta .editors {
     display: flex;

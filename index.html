@@ -2,7 +2,7 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8" />
-        <meta name="viewport" content="width=1024" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Metro DemonList</title>
 
         <!-- Replace your server icon by uploading an image file named "list_icon.png"-->
@@ -16,6 +16,8 @@
         <link rel="stylesheet" type="text/css" href="css/reset.css" />
         <link rel="stylesheet" type="text/css" href="css/typography.css" />
         <link rel="stylesheet" type="text/css" href="css/main.css" />
+        <link rel="stylesheet" type="text/css" href="css/animations.css" />
+        <link rel="stylesheet" type="text/css" href="css/responsive.css" />
         <link rel="stylesheet" type="text/css" href="css/pages/list.css" />
         <link
             rel="stylesheet"
@@ -38,7 +40,7 @@
         <header :class="{ dark: store.dark }">
             <div class="logo">
                 <h2>Metro DemonList</h2>
-                <p>v1.0.0</p>
+                <p>v2.0</p>
             </div>
             <nav class="nav">
                 <router-link class="nav__tab" to="/">
@@ -61,7 +63,7 @@
                         />
                     </button>
                     <!-- Replace the '#' with your discord server's invite-->
-                    <a class="nav__icon" href="https://t.me/@fanbasaZET">
+                    <a class="nav__icon" href="https://t.me/@fanbaseZET">
                         <img src="assets/telegram.svg" alt="Telegram Logo" />
                     </a>
                     <!-- List record submission form, add a link to replace the '#' when putting a link to your list submission form-->

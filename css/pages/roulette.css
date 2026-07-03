@@ -4,12 +4,17 @@
     flex-direction: column;
     gap: 2rem;
     align-items: flex-start;
+    background: var(--color-background);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-sm);
 }
 .page-roulette .sidebar a {
     text-decoration: underline;
+    transition: var(--transition);
 }
 .page-roulette .sidebar a:hover {
-    color: var(--color-on-background);
+    color: var(--color-accent);
+    transform: translateX(4px);
 }
 
 .page-roulette .sidebar .check {
@@ -48,9 +53,16 @@
     display: grid;
     grid-template-columns: 12rem 1fr;
     grid-auto-rows: max-content;
-    border-radius: 0.5rem;
+    border-radius: var(--border-radius);
     overflow: hidden;
     background-color: var(--color-background-hover);
+    box-shadow: var(--shadow-md);
+    transition: var(--transition);
+    animation: slideUp 0.5s ease-out;
+}
+.page-roulette .levels .level:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
 }
 .page-roulette .levels .level .video img {
     width: 100%;
@@ -66,7 +78,7 @@
 }
 .page-roulette .levels .level .actions {
     grid-column: 1 / span 2;
-    background-color: #1b314f;
+    background: linear-gradient(135deg, #1b314f 0%, #2a4365 100%);
     margin: 0;
     padding: 1rem;
     display: flex;
@@ -74,11 +86,17 @@
 }
 .page-roulette .levels .level .actions input[type="number"] {
     border: none;
-    border-radius: 0.5rem;
-    padding: 0.7rem;
+    border-radius: 12px;
+    padding: 0.9rem;
     background-color: #475a7b;
     flex: 1;
     color: white;
+    transition: var(--transition);
+}
+.page-roulette .levels .level .actions input[type="number"]:focus {
+    outline: none;
+    background-color: #5a6f94;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.3);
 }
 .page-roulette .levels .level .actions input[type="number"]::placeholder {
     color: #7487aa;
@@ -110,10 +128,17 @@
 }
 .page-roulette .toast {
     display: flex;
-    background-color: #d50000;
+    background: linear-gradient(135deg, #ff6b6b 0%, #d50000 100%);
     color: white;
-    padding: 1rem;
-    border-radius: 0.5rem;
+    padding: 1.25rem;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-md);
+    animation: slideIn 0.4s ease-out;
+    transition: var(--transition);
+}
+.page-roulette .toast:hover {
+    transform: translateX(-4px);
+    box-shadow: var(--shadow-lg);
 }
 
 @media screen and (min-width: 1366px) {
