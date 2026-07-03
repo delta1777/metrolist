@@ -200,3 +200,27 @@ main.dark ::-webkit-scrollbar-thumb {
 main.dark ::-webkit-scrollbar-thumb:hover {
     background: #f5f5f5;
 }
+
+/* CRITICAL: Global dark theme white text - must be at the end to override everything */
+main.dark,
+main.dark * {
+    color: white !important;
+}
+
+/* Exceptions for specific colored elements */
+main.dark .page-list .list .level.error button,
+main.dark .page-list .list .level.error button * {
+    color: var(--color-error) !important;
+}
+
+main.dark .page-leaderboard .board tr:nth-child(1) .rank p {
+    color: #FFD700 !important;
+}
+
+main.dark .page-leaderboard .board tr:nth-child(2) .rank p {
+    color: #C0C0C0 !important;
+}
+
+main.dark .page-leaderboard .board tr:nth-child(3) .rank p {
+    color: #CD7F32 !important;
+}
