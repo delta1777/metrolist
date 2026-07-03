@@ -147,3 +147,22 @@ main.dark .page-leaderboard .player a {
 .page-leaderboard .player .table a:hover {
     text-decoration: underline;
 }
+
+/* Global dark theme text color override */
+main.dark .page-leaderboard * {
+    color: #f5f5f5 !important;
+}
+/* Keep rank colors for top 3 */
+main.dark .page-leaderboard .board tr:nth-child(1) .rank p {
+    color: #FFD700 !important; /* Gold */
+}
+main.dark .page-leaderboard .board tr:nth-child(2) .rank p {
+    color: #C0C0C0 !important; /* Silver */
+}
+main.dark .page-leaderboard .board tr:nth-child(3) .rank p {
+    color: #CD7F32 !important; /* Bronze */
+}
+/* Keep active button text white */
+main.dark .page-leaderboard .board .user.active button {
+    color: white !important;
+}

@@ -209,3 +209,16 @@ main.dark .page-list .level-container .level .stats li:hover {
 .page-list .meta .editors li a:hover {
     text-decoration: underline;
 }
+
+/* Global dark theme text color override */
+main.dark .page-list * {
+    color: #f5f5f5 !important;
+}
+/* Keep error color red */
+main.dark .page-list .list .level.error button {
+    color: var(--color-error) !important;
+}
+/* Keep active button text white */
+main.dark .page-list .list .level.active button {
+    color: white !important;
+}
