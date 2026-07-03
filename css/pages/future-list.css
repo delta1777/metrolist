@@ -1,6 +1,13 @@
 .page-future-list {
+    display: block !important;
+    grid-template-columns: none !important;
     padding: 2rem;
     max-width: 100%;
+}
+
+.page-future-list .future-list-container {
+    width: 100%;
+    overflow-y: auto;
 }
 
 .page-future-list .future-list-container h1 {
