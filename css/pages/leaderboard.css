@@ -42,9 +42,23 @@
     padding-block: 1rem;
     text-align: end;
 }
+/* Rank colors for top 3 */
+.page-leaderboard .board tr:nth-child(1) .rank p {
+    color: #FFD700 !important; /* Gold */
+}
+.page-leaderboard .board tr:nth-child(2) .rank p {
+    color: #C0C0C0 !important; /* Silver */
+}
+.page-leaderboard .board tr:nth-child(3) .rank p {
+    color: #CD7F32 !important; /* Bronze */
+}
 .page-leaderboard .board .total {
     padding: 1rem;
     text-align: end;
+    color: #000000;
+}
+main.dark .page-leaderboard .board .total {
+    color: #f5f5f5;
 }
 .page-leaderboard .board .user {
     width: 100%;
@@ -104,17 +118,13 @@ main.dark .page-leaderboard .board .user.active button {
 .page-leaderboard .player h1,
 .page-leaderboard .player h2,
 .page-leaderboard .player p,
-.page-leaderboard .player a,
-.page-leaderboard .board .rank,
-.page-leaderboard .board .total {
+.page-leaderboard .player a {
     color: #000000;
 }
 main.dark .page-leaderboard .player h1,
 main.dark .page-leaderboard .player h2,
 main.dark .page-leaderboard .player p,
-main.dark .page-leaderboard .player a,
-main.dark .page-leaderboard .board .rank,
-main.dark .page-leaderboard .board .total {
+main.dark .page-leaderboard .player a {
     color: #f5f5f5 !important;
 }
 .page-leaderboard .player .table {
