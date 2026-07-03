@@ -1,16 +1,16 @@
 :root {
-    --color-background: #f8f9fa;
-    --color-on-background: #1a1a2e;
-    --color-background-hover: #e9ecef;
-    --color-on-background-hover: #0f3460;
-    --color-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    --color-primary-solid: #667eea;
-    --color-secondary: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-    --color-accent: #00d4ff;
+    --color-background: #ffffff;
+    --color-on-background: #2c3e50;
+    --color-background-hover: #f0f4f8;
+    --color-on-background-hover: #1a252f;
+    --color-primary: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+    --color-primary-solid: #3498db;
+    --color-secondary: linear-gradient(135deg, #1abc9c 0%, #16a085 100%);
+    --color-accent: #2ecc71;
     --color-on-primary: white;
-    --color-error: #ff6b6b;
+    --color-error: #e74c3c;
     --color-on-error: white;
-    --color-success: #51cf66;
+    --color-success: #27ae60;
     --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
     --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.12);
     --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.16);
@@ -56,10 +56,7 @@ main {
     background-color: var(--color-background);
     color: var(--color-on-background);
     display: grid;
-    grid-template-columns: minmax(16rem, 1fr) minmax(16rem, 2fr) minmax(
-            16em,
-            1fr
-        );
+    grid-template-columns: minmax(16rem, 1fr) minmax(16rem, 2fr);
     column-gap: 2rem;
 }
 
@@ -90,7 +87,7 @@ header .logo {
     animation: slideInLeft 0.6s ease-out;
 }
 header .logo h2 {
-    background: linear-gradient(135deg, #ffffff 0%, #e0e0e0 100%);
+    background: linear-gradient(135deg, #3498db 0%, #2ecc71 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -160,6 +157,10 @@ input[type="checkbox"] {
     margin: 0;
     accent-color: var(--color-primary-solid);
     transition: var(--transition);
+}
+
+main.dark input[type="checkbox"] {
+    accent-color: #ffffff;
 }
 
 input[type="checkbox"]:hover {
