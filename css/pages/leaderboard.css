@@ -51,7 +51,7 @@
 }
 .page-leaderboard .board .user button {
     background-color: var(--color-background);
-    color: var(--color-on-background);
+    color: #000000;
     border: none;
     border-radius: var(--border-radius);
     padding: 1.25rem;
@@ -62,6 +62,9 @@
     box-shadow: var(--shadow-sm);
     position: relative;
     overflow: hidden;
+}
+main.dark .page-leaderboard .board .user button {
+    color: var(--color-on-background);
 }
 .page-leaderboard .board .user button::before {
     content: '';
@@ -85,15 +88,34 @@
 }
 .page-leaderboard .board .user.active button {
     background: var(--color-primary);
-    color: var(--color-on-primary);
+    color: #000000;
     box-shadow: var(--shadow-lg);
     transform: scale(1.02);
+}
+main.dark .page-leaderboard .board .user.active button {
+    color: var(--color-on-primary);
 }
 .page-leaderboard .player {
     display: flex;
     flex-direction: column;
     gap: 2rem;
     padding-right: 2rem;
+}
+.page-leaderboard .player h1,
+.page-leaderboard .player h2,
+.page-leaderboard .player p,
+.page-leaderboard .player a,
+.page-leaderboard .board .rank,
+.page-leaderboard .board .total {
+    color: #000000;
+}
+main.dark .page-leaderboard .player h1,
+main.dark .page-leaderboard .player h2,
+main.dark .page-leaderboard .player p,
+main.dark .page-leaderboard .player a,
+main.dark .page-leaderboard .board .rank,
+main.dark .page-leaderboard .board .total {
+    color: var(--color-on-background);
 }
 .page-leaderboard .player .table {
     table-layout: fixed;
