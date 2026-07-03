@@ -48,22 +48,15 @@
             </div>
             <nav class="nav">
                 <router-link class="nav__tab" to="/">
-                    <span class="type-label-lg">{{ store.t('nav.list') }}</span>
+                    <span class="type-label-lg">List</span>
                 </router-link>
                 <router-link class="nav__tab" to="/leaderboard">
-                    <span class="type-label-lg">{{ store.t('nav.leaderboard') }}</span>
+                    <span class="type-label-lg">Leaderboard</span>
                 </router-link>
                 <router-link class="nav__tab" to="/future-list">
-                    <span class="type-label-lg">{{ store.t('nav.futureList') }}</span>
+                    <span class="type-label-lg">Future List</span>
                 </router-link>
                 <div class="nav__actions">
-                    <button
-                        class="nav__icon"
-                        @click.prevent="store.setLocale(store.locale === 'ru' ? 'en' : 'ru')"
-                        :title="store.locale === 'ru' ? 'Switch to English' : 'Переключить на русский'"
-                    >
-                        <span class="lang-text">{{ store.locale === 'ru' ? 'EN' : 'RU' }}</span>
-                    </button>
                     <button
                         class="nav__icon"
                         @click.prevent="store.toggleDark()"
@@ -78,7 +71,7 @@
                         class="nav__cta type-label-lg"
                         href="https://docs.google.com/forms/d/e/1FAIpQLScVrWmxtzXpwSUIV5aGXo47CkxV5zmk_7w_YjZXQ8hGEeENsQ/viewform?usp=publish-editor"
                         target="_blank"
-                        >{{ store.t('nav.submitRecord') }}</a
+                        >Подать прохождение</a
                     >
                 </div>
             </nav>

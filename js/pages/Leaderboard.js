@@ -1,6 +1,5 @@
 import { fetchLeaderboard } from '../content.js';
 import { localize } from '../util.js';
-import { store } from '../main.js';
 
 import Spinner from '../components/Spinner.js';
 
@@ -13,7 +12,6 @@ export default {
         loading: true,
         selected: 0,
         err: [],
-        store
     }),
     template: `
         <main v-if="loading">
@@ -23,7 +21,7 @@ export default {
             <div class="page-leaderboard">
                 <div class="error-container">
                     <p class="error" v-if="err.length > 0">
-                        {{ store.t('leaderboard.errorText') }} {{ err.join(', ') }}
+                        Leaderboard may be incorrect, as the following levels could not be loaded: {{ err.join(', ') }}
                     </p>
                 </div>
                 <div class="board-container">
@@ -47,7 +45,7 @@ export default {
                     <div class="player">
                         <h1>#{{ selected + 1 }} {{ entry.user }}</h1>
                         <h3>{{ entry.total }}</h3>
-                        <h2 v-if="entry.verified.length > 0">{{ store.t('leaderboard.verified') }} ({{ entry.verified.length}})</h2>
+                        <h2 v-if="entry.verified.length > 0">Verified ({{ entry.verified.length}})</h2>
                         <table class="table">
                             <tr v-for="score in entry.verified">
                                 <td class="rank">
@@ -61,7 +59,7 @@ export default {
                                 </td>
                             </tr>
                         </table>
-                        <h2 v-if="entry.completed.length > 0">{{ store.t('leaderboard.completed') }} ({{ entry.completed.length }})</h2>
+                        <h2 v-if="entry.completed.length > 0">Completed ({{ entry.completed.length }})</h2>
                         <table class="table">
                             <tr v-for="score in entry.completed">
                                 <td class="rank">
@@ -75,7 +73,7 @@ export default {
                                 </td>
                             </tr>
                         </table>
-                        <h2 v-if="entry.progressed.length > 0">{{ store.t('leaderboard.progressed') }} ({{entry.progressed.length}})</h2>
+                        <h2 v-if="entry.progressed.length > 0">Progressed ({{entry.progressed.length}})</h2>
                         <table class="table">
                             <tr v-for="score in entry.progressed">
                                 <td class="rank">

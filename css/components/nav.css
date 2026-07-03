@@ -67,17 +67,6 @@ header:not(.dark) .nav .nav__tab span {
 .nav .nav__actions .nav__icon img {
     height: 1.5rem;
 }
-.nav .nav__actions .nav__icon .lang-text {
-    font-weight: 700;
-    font-size: 1rem;
-    color: inherit;
-}
-header:not(.dark) .nav .nav__actions .nav__icon .lang-text {
-    color: #000000;
-}
-header.dark .nav .nav__actions .nav__icon .lang-text {
-    color: white;
-}
 .nav .nav__actions .nav__cta {
     margin-left: 1rem;
     padding: 1rem 1.5rem;
