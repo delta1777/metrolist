@@ -1,22 +1,26 @@
 [
     {
-        "id": 1,
-        "name": "Example Challenge",
-        "author": "Author Name",
-        "creators": ["Creator1", "Creator2"],
-        "verifier": "Verifier Name",
-        "verification": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+        "id": 107682908,
+        "name": "BetterSpirapidron",
+        "author": "c5j",
+        "creators": [ "baton" ],
+        "verifier": "v6j",
+        "verification": "https://youtu.be/aFA1Tuyv9D8",
         "showcase": "",
         "percentToQualify": 100,
-        "password": "123456",
-        "records": [
-            {
-                "user": "Player1",
-                "link": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-                "percent": 100,
-                "hz": 240,
-                "mobile": false
-            }
-        ]
+        "password": "123123"
+    }
+]
+[
+    {
+        "id": 107682908,
+        "name": "old SPIRAPIDRON X",
+        "author": "123",
+        "creators": [ "baton", "c5j" ],
+        "verifier": "v6j",
+        "verification": "https://youtu.be/-sWcA2dkxP0",
+        "showcase": "",
+        "percentToQualify": 100,
+        "password": "123123"
     }
 ]
