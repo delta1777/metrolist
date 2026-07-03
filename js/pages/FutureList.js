@@ -1,4 +1,5 @@
 import { embed } from '../util.js';
+import { store } from '../main.js';
 import Spinner from '../components/Spinner.js';
 
 export default {
@@ -9,8 +10,8 @@ export default {
         </main>
         <main v-else class="page-future-list">
             <div class="future-list-container">
-                <h1>Future List</h1>
-                <p class="description">Levels that are currently being verified</p>
+                <h1>{{ store.t('futureList.title') }}</h1>
+                <p class="description">{{ store.t('futureList.description') }}</p>
                 <div class="levels-grid">
                     <div v-for="level in levels" :key="level.id" class="level-card">
                         <div class="video-container">
@@ -23,18 +24,18 @@ export default {
                         </div>
                         <div class="level-info">
                             <h2>{{ level.name }}</h2>
-                            <div class="progress-info">
-                                <span class="label">Best Progress:</span>
-                                <span class="progress">{{ level.progress }}%</span>
-                            </div>
                             <div class="author-info">
-                                <span class="label">Creator:</span>
+                                <span class="label">{{ store.t('futureList.creator') }}:</span>
                                 <span class="author">{{ level.creator }}</span>
                             </div>
                             <div class="verifier-info" v-if="level.verifier">
-                                <span class="label">Verifier:</span>
+                                <span class="label">{{ store.t('futureList.verifier') }}:</span>
                                 <span class="verifier">{{ level.verifier }}</span>
                             </div>
+                        </div>
+                        <div class="progress-info">
+                            <span class="label">{{ store.t('futureList.bestProgress') }}</span>
+                            <span class="progress">{{ level.progress }}%</span>
                         </div>
                     </div>
                 </div>
@@ -44,6 +45,7 @@ export default {
     data: () => ({
         levels: [],
         loading: true,
+        store
     }),
     async mounted() {
         try {

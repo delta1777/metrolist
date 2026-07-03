@@ -26,11 +26,11 @@ export default {
                     <tr v-for="([level, err], i) in list">
                         <td class="rank">
                             <p v-if="i + 1 <= 150" class="type-label-lg">#{{ i + 1 }}</p>
-                            <p v-else class="type-label-lg">Legacy</p>
+                            <p v-else class="type-label-lg">{{ store.t('list.legacy') }}</p>
                         </td>
                         <td class="level" :class="{ 'active': selected == i, 'error': !level }">
                             <button @click="selected = i">
-                                <span class="type-label-lg">{{ level?.name || \`Error (\${err}.json)\` }}</span>
+                                <span class="type-label-lg">{{ level?.name || `Error (\${err}.json)` }}</span>
                             </button>
                         </td>
                     </tr>
@@ -43,22 +43,22 @@ export default {
                     <iframe class="video" id="videoframe" :src="video" frameborder="0"></iframe>
                     <ul class="stats">
                         <li>
-                            <div class="type-title-sm">Points when completed</div>
+                            <div class="type-title-sm">{{ store.t('list.pointsWhenCompleted') }}</div>
                             <p>{{ score(selected + 1, 100, level.percentToQualify) }}</p>
                         </li>
                         <li>
-                            <div class="type-title-sm">ID</div>
+                            <div class="type-title-sm">{{ store.t('list.id') }}</div>
                             <p>{{ level.id }}</p>
                         </li>
                         <li>
-                            <div class="type-title-sm">Password</div>
-                            <p>{{ level.password || 'Free to Copy' }}</p>
+                            <div class="type-title-sm">{{ store.t('list.password') }}</div>
+                            <p>{{ level.password || store.t('list.freeToCopy') }}</p>
                         </li>
                     </ul>
-                    <h2>Records</h2>
-                    <p v-if="selected + 1 <= 75"><strong>{{ level.percentToQualify }}%</strong> or better to qualify</p>
-                    <p v-else-if="selected +1 <= 150"><strong>100%</strong> or better to qualify</p>
-                    <p v-else>This level does not accept new records.</p>
+                    <h2>{{ store.t('list.records') }}</h2>
+                    <p v-if="selected + 1 <= 75"><strong>{{ level.percentToQualify }}%</strong> {{ store.t('list.qualifyText') }}</p>
+                    <p v-else-if="selected +1 <= 150"><strong>100%</strong> {{ store.t('list.qualifyText') }}</p>
+                    <p v-else>{{ store.t('list.noRecords') }}</p>
                     <table class="records">
                         <tr v-for="record in level.records" class="record">
                             <td class="percent">
