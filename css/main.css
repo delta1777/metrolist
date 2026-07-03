@@ -200,27 +200,3 @@ main.dark ::-webkit-scrollbar-thumb {
 main.dark ::-webkit-scrollbar-thumb:hover {
     background: #f5f5f5;
 }
-
-/* Light theme - black text for main content (excluding special colored elements) */
-main .page-list .list .level button span {
-    color: #000000 !important;
-}
-
-main .page-list .level-container h1,
-main .page-list .level-container h2,
-main .page-list .level-container p,
-main .page-list .level-container .type-label-lg {
-    color: #000000 !important;
-}
-
-/* Dark theme - white text */
-main.dark .page-list .list .level button span {
-    color: #f5f5f5 !important;
-}
-
-main.dark .page-list .level-container h1,
-main.dark .page-list .level-container h2,
-main.dark .page-list .level-container p,
-main.dark .page-list .level-container .type-label-lg {
-    color: #f5f5f5 !important;
-}
