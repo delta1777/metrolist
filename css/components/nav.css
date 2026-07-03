@@ -18,7 +18,7 @@
     left: 0;
     width: 0;
     height: 4px;
-    background: linear-gradient(90deg, #3498db, #2ecc71);
+    background: transparent;
     transition: width 0.3s ease;
 }
 
@@ -65,12 +65,16 @@ header.dark .nav .nav__tab::after {
 .nav .nav__actions .nav__cta {
     margin-left: 1rem;
     padding: 1rem 1.5rem;
-    background: var(--color-on-primary);
-    color: var(--color-primary-solid);
+    background: var(--color-primary-solid);
+    color: white;
     border-radius: 12px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     font-weight: 600;
+}
+header.dark .nav .nav__actions .nav__cta {
+    background: var(--color-on-primary);
+    color: var(--color-primary-solid);
 }
 .nav .nav__actions .nav__cta:hover:not(:active) {
     transform: translateY(-3px);
