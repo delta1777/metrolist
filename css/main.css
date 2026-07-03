@@ -7,7 +7,7 @@
     --color-primary-solid: #3498db;
     --color-secondary: linear-gradient(135deg, #ffffff 0%, #dcdcdc 100%);
     --color-accent: #2ecc71;
-    --color-on-primary: white;
+    --color-on-primary: #000000;
     --color-error: #e74c3c;
     --color-on-error: white;
     --color-success: #27ae60;
@@ -87,7 +87,7 @@ header .logo {
     animation: slideInLeft 0.6s ease-out;
 }
 header .logo h2 {
-    background: linear-gradient(135deg, #3498db 0%, #2ecc71 100%);
+    background: linear-gradient(135deg, #000000 0%, #4a4a4a 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
