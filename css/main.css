@@ -201,26 +201,26 @@ main.dark ::-webkit-scrollbar-thumb:hover {
     background: #f5f5f5;
 }
 
-/* Light theme - force black text on content */
-main h1, main h2, main h3, main h4, main h5, main h6,
-main p, main label, main span, main div,
-main .type-label-lg, main .type-label-md, main .type-label-sm,
-main .type-body, main .type-title-sm {
+/* Light theme - black text for main content (excluding special colored elements) */
+main .page-list .list .level button span {
     color: #000000 !important;
 }
 
-main a {
+main .page-list .level-container h1,
+main .page-list .level-container h2,
+main .page-list .level-container p,
+main .page-list .level-container .type-label-lg {
     color: #000000 !important;
 }
 
-/* Dark theme - keep white text */
-main.dark h1, main.dark h2, main.dark h3, main.dark h4, main.dark h5, main.dark h6,
-main.dark p, main.dark label, main.dark span, main.dark div,
-main.dark .type-label-lg, main.dark .type-label-md, main.dark .type-label-sm,
-main.dark .type-body, main.dark .type-title-sm {
+/* Dark theme - white text */
+main.dark .page-list .list .level button span {
     color: #f5f5f5 !important;
 }
 
-main.dark a {
+main.dark .page-list .level-container h1,
+main.dark .page-list .level-container h2,
+main.dark .page-list .level-container p,
+main.dark .page-list .level-container .type-label-lg {
     color: #f5f5f5 !important;
 }

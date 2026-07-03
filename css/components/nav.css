@@ -18,7 +18,7 @@
     left: 0;
     width: 0;
     height: 4px;
-    background: transparent;
+    background: #000000;
     transition: width 0.3s ease;
 }
 
