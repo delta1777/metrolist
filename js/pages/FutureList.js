@@ -13,14 +13,13 @@ export default {
                 <p class="description">Уровни, которые сейчас верифицируются</p>
                 <div class="levels-grid">
                     <div v-for="level in levels" :key="level.id" class="level-card">
-                        <div class="video-container">
-                            <iframe
-                                class="video"
-                                :src="embed(level.showcase)"
-                                frameborder="0"
-                                allowfullscreen>
-                            </iframe>
-                        </div>
+                        <a
+                            :href="level.showcase"
+                            target="_blank"
+                            class="video-container"
+                            :style="{ backgroundImage: 'url(' + getThumbnail(level.showcase) + ')' }"
+                        >
+                        </a>
                         <div class="level-info">
                             <h2>{{ level.name }}</h2>
                             <div class="author-info">
@@ -59,5 +58,13 @@ export default {
     },
     methods: {
         embed,
+        getThumbnail(url) {
+            // Extract video ID from YouTube URL
+            const videoId = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\s]+)/)?.[1];
+            if (videoId) {
+                return `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
+            }
+            return '';
+        }
     },
 };

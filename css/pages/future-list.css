@@ -67,14 +67,19 @@ main.dark .page-future-list .description {
     background: #000;
     border-radius: var(--border-radius);
     overflow: hidden;
+    background-size: cover;
+    background-position: center;
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-.page-future-list .video-container .video {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+.page-future-list .video-container:hover {
+    transform: scale(1.02);
+    box-shadow: var(--shadow-lg);
+    opacity: 0.9;
 }
 
 .page-future-list .level-info {
