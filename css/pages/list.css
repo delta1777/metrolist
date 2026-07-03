@@ -65,6 +65,9 @@
     box-shadow: var(--shadow-lg);
     transform: scale(1.02);
 }
+main:not(.dark) .page-list .list .level.active button {
+    color: #2c3e50;
+}
 .page-list .level-container .level {
     display: flex;
     flex-direction: column;
@@ -111,7 +114,10 @@
     box-shadow: var(--shadow-md);
 }
 main.dark .page-list .level-container .level .stats li {
-    border: 2px solid rgba(255, 255, 255, 0.2);
+    border: 2px solid rgba(255, 255, 255, 0.5);
+}
+main.dark .page-list .level-container .level .stats li:hover {
+    border-color: rgba(255, 255, 255, 0.7);
 }
 .page-list .level-container .level .records {
     table-layout: fixed;
