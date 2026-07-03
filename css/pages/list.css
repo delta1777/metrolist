@@ -61,12 +61,16 @@
 }
 .page-list .list .level.active button {
     background: var(--color-primary);
-    color: #2c3e50;
     box-shadow: var(--shadow-lg);
     transform: scale(1.02);
 }
+/* Light theme - black text */
+main .page-list .list .level.active button {
+    color: #2c3e50 !important;
+}
+/* Dark theme - white text */
 main.dark .page-list .list .level.active button {
-    color: white;
+    color: white !important;
 }
 .page-list .level-container .level {
     display: flex;
