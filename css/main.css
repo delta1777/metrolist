@@ -3,9 +3,9 @@
     --color-on-background: #2c3e50;
     --color-background-hover: #f0f4f8;
     --color-on-background-hover: #1a252f;
-    --color-primary: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+    --color-primary: linear-gradient(135deg, #ffffff 0%, #dcdcdc 100%);
     --color-primary-solid: #3498db;
-    --color-secondary: linear-gradient(135deg, #1abc9c 0%, #16a085 100%);
+    --color-secondary: linear-gradient(135deg, #ffffff 0%, #dcdcdc 100%);
     --color-accent: #2ecc71;
     --color-on-primary: white;
     --color-error: #e74c3c;
@@ -168,22 +168,22 @@ input[type="checkbox"]:hover {
 }
 
 /* Scrollbar styles for light theme */
-::-webkit-scrollbar {
+main ::-webkit-scrollbar {
     width: 12px;
 }
 
-::-webkit-scrollbar-track {
+main ::-webkit-scrollbar-track {
     background: #f0f4f8;
     border-radius: 10px;
 }
 
-::-webkit-scrollbar-thumb {
+main ::-webkit-scrollbar-thumb {
     background: #2c3e50;
     border-radius: 10px;
     border: 2px solid #f0f4f8;
 }
 
-::-webkit-scrollbar-thumb:hover {
+main ::-webkit-scrollbar-thumb:hover {
     background: #1a252f;
 }
 
