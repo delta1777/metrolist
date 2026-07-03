@@ -47,7 +47,9 @@ export default {
     }),
     async mounted() {
         try {
-            const response = await fetch('data/future_list.json');
+            // Add cache busting parameter
+            const timestamp = new Date().getTime();
+            const response = await fetch(`data/future_list.json?v=${timestamp}`);
             this.levels = await response.json();
         } catch (err) {
             console.error('Failed to load future list:', err);

@@ -102,6 +102,35 @@
         padding-inline: 0.5rem;
     }
 
+    /* Future List mobile styles */
+    .page-future-list {
+        padding: 1rem 0.5rem;
+    }
+
+    .page-future-list .future-list-container h1 {
+        font-size: 2rem;
+    }
+
+    .page-future-list .description {
+        font-size: 1rem;
+    }
+
+    .page-future-list .level-card {
+        grid-template-columns: 1fr !important;
+        padding: 1rem;
+        gap: 1rem;
+    }
+
+    .page-future-list .video-container {
+        width: 100%;
+        height: 200px;
+    }
+
+    .page-future-list .progress-info {
+        width: 100%;
+        padding: 1.5rem;
+    }
+
     .page-roulette .levels .level {
         grid-template-columns: 1fr;
     }
@@ -133,6 +162,28 @@
 
     .page-list .level-container .level .stats li {
         width: 100%;
+    }
+
+    /* Make tables scrollable on mobile */
+    .page-list .level-container .level .records,
+    .page-leaderboard .player .table {
+        display: block;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .page-list .level-container .level .records table,
+    .page-leaderboard .player .table table {
+        min-width: 100%;
+    }
+
+    /* Reduce font sizes */
+    h1 {
+        font-size: 2rem;
+    }
+
+    h2 {
+        font-size: 1.5rem;
     }
 
     .btn {
