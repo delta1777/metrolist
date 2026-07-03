@@ -36,7 +36,7 @@
     overflow: hidden;
 }
 main.dark .page-list .list .level button {
-    color: var(--color-on-background);
+    color: #f5f5f5 !important;
 }
 .page-list .list .level button::before {
     content: '';
@@ -96,7 +96,7 @@ main.dark .page-list .level-container .level p,
 main.dark .page-list .level-container .level a,
 main.dark .page-list .level-container .level .type-title-sm,
 main.dark .page-list .level-container .level .type-label-lg {
-    color: var(--color-on-background);
+    color: #f5f5f5 !important;
 }
 .page-list .level-container .level .level-authors {
     display: grid;

@@ -64,7 +64,7 @@
     overflow: hidden;
 }
 main.dark .page-leaderboard .board .user button {
-    color: var(--color-on-background);
+    color: #f5f5f5 !important;
 }
 .page-leaderboard .board .user button::before {
     content: '';
@@ -93,7 +93,7 @@ main.dark .page-leaderboard .board .user button {
     transform: scale(1.02);
 }
 main.dark .page-leaderboard .board .user.active button {
-    color: var(--color-on-primary);
+    color: white !important;
 }
 .page-leaderboard .player {
     display: flex;
@@ -115,7 +115,7 @@ main.dark .page-leaderboard .player p,
 main.dark .page-leaderboard .player a,
 main.dark .page-leaderboard .board .rank,
 main.dark .page-leaderboard .board .total {
-    color: var(--color-on-background);
+    color: #f5f5f5 !important;
 }
 .page-leaderboard .player .table {
     table-layout: fixed;
