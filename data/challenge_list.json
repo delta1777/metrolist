@@ -1,0 +1,22 @@
+[
+    {
+        "id": 1,
+        "name": "Example Challenge",
+        "author": "Author Name",
+        "creators": ["Creator1", "Creator2"],
+        "verifier": "Verifier Name",
+        "verification": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+        "showcase": "",
+        "percentToQualify": 100,
+        "password": "123456",
+        "records": [
+            {
+                "user": "Player1",
+                "link": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+                "percent": 100,
+                "hz": 240,
+                "mobile": false
+            }
+        ]
+    }
+]
