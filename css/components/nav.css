@@ -65,7 +65,7 @@ header.dark .nav .nav__tab::after {
 .nav .nav__actions .nav__cta {
     margin-left: 1rem;
     padding: 1rem 1.5rem;
-    background: var(--color-primary-solid);
+    background: #000000;
     color: white;
     border-radius: 12px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);

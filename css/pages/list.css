@@ -22,7 +22,7 @@
 }
 .page-list .list .level button {
     background-color: var(--color-background);
-    color: var(--color-on-background);
+    color: #000000;
     border: none;
     border-radius: var(--border-radius);
     padding: 1.25rem;
@@ -34,6 +34,9 @@
     box-shadow: var(--shadow-sm);
     position: relative;
     overflow: hidden;
+}
+main.dark .page-list .list .level button {
+    color: var(--color-on-background);
 }
 .page-list .list .level button::before {
     content: '';
@@ -78,6 +81,22 @@ main.dark .page-list .list .level.active button {
     gap: 2rem;
     padding-right: 2rem;
     max-width: 48rem;
+}
+.page-list .level-container .level h1,
+.page-list .level-container .level h2,
+.page-list .level-container .level p,
+.page-list .level-container .level a,
+.page-list .level-container .level .type-title-sm,
+.page-list .level-container .level .type-label-lg {
+    color: #000000;
+}
+main.dark .page-list .level-container .level h1,
+main.dark .page-list .level-container .level h2,
+main.dark .page-list .level-container .level p,
+main.dark .page-list .level-container .level a,
+main.dark .page-list .level-container .level .type-title-sm,
+main.dark .page-list .level-container .level .type-label-lg {
+    color: var(--color-on-background);
 }
 .page-list .level-container .level .level-authors {
     display: grid;
