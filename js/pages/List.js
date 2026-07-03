@@ -115,7 +115,7 @@ export default {
         // Error handling
         if (!this.list) {
             this.errors = [
-                "Failed to load list. Retry in a few minutes or notify list staff (discord delta7771).",
+                "Failed to load list. Retry in a few minutes or notify list staff on telegram (@delta1777).",
             ];
         } else {
             this.errors.push(
