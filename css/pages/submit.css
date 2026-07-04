@@ -6,11 +6,11 @@
     display: flex;
     justify-content: center;
     align-items: flex-start;
-    background: var(--background);
+    background-color: var(--color-background);
 }
 
 .page-submit.dark {
-    background: var(--background-dark);
+    background-color: var(--color-background);
 }
 
 .submit-container {
@@ -21,6 +21,7 @@
 .submit-container h1 {
     margin-bottom: 2rem;
     text-align: center;
+    color: var(--color-on-background);
 }
 
 .submit-type-selector {
@@ -32,9 +33,9 @@
 .submit-type-btn {
     flex: 1;
     padding: 1rem;
-    border: 2px solid var(--primary);
+    border: 2px solid var(--color-on-background);
     background: transparent;
-    color: var(--primary);
+    color: var(--color-on-background);
     border-radius: 8px;
     cursor: pointer;
     font-size: 1rem;
@@ -43,23 +44,12 @@
 }
 
 .submit-type-btn:hover {
-    background: rgba(var(--primary-rgb), 0.1);
+    background: var(--color-background-hover);
 }
 
 .submit-type-btn.active {
-    background: var(--primary);
-    color: #ffffff;
-}
-
-.page-submit.dark .submit-type-btn {
-    color: var(--text-dark);
-    border-color: var(--text-dark);
-    background: transparent;
-}
-
-.page-submit.dark .submit-type-btn.active {
-    background: var(--text-dark);
-    color: #000000;
+    background: var(--color-on-background);
+    color: var(--color-background);
 }
 
 .submit-form {
@@ -76,35 +66,24 @@
 
 .form-group label {
     font-weight: 600;
-    color: var(--text);
-}
-
-.page-submit.dark .form-group label {
-    color: var(--text-dark);
+    color: var(--color-on-background);
 }
 
 .form-group input,
 .form-group textarea {
     padding: 0.75rem;
-    border: 2px solid var(--border);
+    border: 2px solid var(--color-on-background);
     border-radius: 8px;
     font-size: 1rem;
-    background: var(--background);
-    color: var(--text);
+    background: var(--color-background);
+    color: var(--color-on-background);
     transition: border-color 0.2s ease;
-}
-
-.page-submit.dark .form-group input,
-.page-submit.dark .form-group textarea {
-    background: var(--background-dark);
-    color: var(--text-dark);
-    border-color: var(--border-dark);
 }
 
 .form-group input:focus,
 .form-group textarea:focus {
     outline: none;
-    border-color: var(--primary);
+    border-color: var(--color-primary-solid);
 }
 
 .form-group input[type="checkbox"] {
@@ -120,8 +99,8 @@
 
 .btn-submit {
     padding: 1rem 2rem;
-    background: var(--primary);
-    color: #ffffff;
+    background: var(--color-on-background);
+    color: var(--color-background);
     border: none;
     border-radius: 8px;
     font-size: 1rem;
@@ -131,18 +110,13 @@
 }
 
 .btn-submit:hover:not(:disabled) {
-    background: var(--primary-hover);
+    opacity: 0.9;
     transform: translateY(-2px);
 }
 
 .btn-submit:disabled {
     opacity: 0.6;
     cursor: not-allowed;
-}
-
-.page-submit.dark .btn-submit {
-    background: var(--text-dark);
-    color: #000000;
 }
 
 .submit-message {
