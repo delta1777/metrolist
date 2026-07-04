@@ -3,3 +3,45 @@
 deno.json
 
 node_modules/
+
+# Конфиденциальные данные и настройки
+.env
+.env.local
+.env.*.local
+
+# Firebase конфигурация
+firebase-config.js
+firebaseConfig.js
+js/firebase.js
+
+# Supabase конфигурация
+supabase-config.js
+js/supabase.js
+
+# EmailJS и другие API ключи
+api-keys.js
+secrets.js
+
+# Конфигурация админ-панели
+admin-config.js
+
+# Локальные данные пользователей (если используется файловая БД)
+data/users.json
+data/submissions.json
+data/accounts.json
+database.json
+db.json
+
+# Логи и временные файлы
+*.log
+logs/
+tmp/
+temp/
+
+# Резервные копии
+*.backup
+*.bak
+
+# Персональные настройки
+settings.local.json
+config.local.json

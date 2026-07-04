@@ -28,6 +28,9 @@
             type="text/css"
             href="css/pages/future-list.css"
         />
+        <link rel="stylesheet" type="text/css" href="css/pages/submit.css" />
+        <link rel="stylesheet" type="text/css" href="css/pages/profile.css" />
+        <link rel="stylesheet" type="text/css" href="css/pages/admin.css" />
         <link rel="stylesheet" type="text/css" href="css/components/nav.css" />
         <link rel="stylesheet" type="text/css" href="css/components/btn.css" />
         <link
@@ -69,13 +72,12 @@
                             alt=""
                         />
                     </button>
-                    <!-- List record submission form, add a link to replace the '#' when putting a link to your list submission form-->
-                    <a
-                        class="nav__cta type-label-lg"
-                        href="https://docs.google.com/forms/d/e/1FAIpQLScVrWmxtzXpwSUIV5aGXo47CkxV5zmk_7w_YjZXQ8hGEeENsQ/viewform?usp=publish-editor"
-                        target="_blank"
-                        >Отправить прохождение</a
-                    >
+                    <router-link class="nav__cta type-label-lg" to="/submit">
+                        Отправить Уровень/Прохождение
+                    </router-link>
+                    <router-link class="nav__icon" to="/profile">
+                        <img src="assets/user.svg" alt="Profile" />
+                    </router-link>
                 </div>
             </nav>
         </header>

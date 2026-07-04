@@ -1,0 +1,169 @@
+/* Submit Page Styles */
+.page-submit {
+    padding: 2rem;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.submit-container {
+    background: var(--surface);
+    border-radius: 8px;
+    padding: 2rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.page-submit.dark .submit-container {
+    background: var(--surface-dark);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.submit-container h1 {
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.submit-type-selector {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.submit-type-btn {
+    flex: 1;
+    padding: 1rem;
+    border: 2px solid var(--primary);
+    background: transparent;
+    color: var(--text);
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.submit-type-btn:hover {
+    background: rgba(var(--primary-rgb), 0.1);
+}
+
+.submit-type-btn.active {
+    background: var(--primary);
+    color: white;
+}
+
+.page-submit.dark .submit-type-btn {
+    color: var(--text-dark);
+    border-color: var(--primary-dark);
+}
+
+.page-submit.dark .submit-type-btn.active {
+    background: var(--primary-dark);
+}
+
+.submit-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.form-group label {
+    font-weight: 600;
+    color: var(--text);
+}
+
+.page-submit.dark .form-group label {
+    color: var(--text-dark);
+}
+
+.form-group input,
+.form-group textarea {
+    padding: 0.75rem;
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    font-size: 1rem;
+    background: var(--background);
+    color: var(--text);
+    transition: border-color 0.2s ease;
+}
+
+.page-submit.dark .form-group input,
+.page-submit.dark .form-group textarea {
+    background: var(--background-dark);
+    color: var(--text-dark);
+    border-color: var(--border-dark);
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: var(--primary);
+}
+
+.form-group input[type="checkbox"] {
+    width: auto;
+    margin-right: 0.5rem;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: center;
+    margin-top: 1rem;
+}
+
+.btn-submit {
+    padding: 1rem 2rem;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-submit:hover:not(:disabled) {
+    background: var(--primary-hover);
+    transform: translateY(-2px);
+}
+
+.btn-submit:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.page-submit.dark .btn-submit {
+    background: var(--primary-dark);
+}
+
+.submit-message {
+    padding: 1rem;
+    border-radius: 8px;
+    background: #4caf50;
+    color: white;
+    text-align: center;
+    font-weight: 600;
+}
+
+.submit-message.error {
+    background: #f44336;
+}
+
+@media (max-width: 768px) {
+    .page-submit {
+        padding: 1rem;
+    }
+
+    .submit-container {
+        padding: 1.5rem;
+    }
+
+    .submit-type-selector {
+        flex-direction: column;
+    }
+}
