@@ -1,5 +1,6 @@
 import { store } from "../main.js";
 import { getSupabase } from "../supabase.js";
+import { validateSubmission, sanitizeHTML } from "../validation.js";
 
 export default {
     template: `
@@ -207,28 +208,51 @@ export default {
             }
 
             try {
-                const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+                const userData = JSON.parse(sessionStorage.getItem('userData') || '{}');
                 const username = this.formData.username || userData.username || 'anonymous';
+
+                // Санитизация всех строковых полей
+                const sanitizedData = {
+                    username: sanitizeHTML(username),
+                    videoLink: this.formData.videoLink.trim(),
+                    levelName: sanitizeHTML(this.formData.levelName),
+                    creators: sanitizeHTML(this.formData.creators || ''),
+                    verifier: sanitizeHTML(this.formData.verifier || ''),
+                    comments: sanitizeHTML(this.formData.comments || ''),
+                    type: this.submitType,
+                    levelId: this.formData.levelId,
+                    progress: this.formData.progress,
+                    completedOnMobile: this.formData.completedOnMobile
+                };
+
+                // Валидация
+                const validation = validateSubmission(sanitizedData);
+                if (!validation.valid) {
+                    this.submitError = true;
+                    this.submitMessage = Object.values(validation.errors).join(', ');
+                    this.isSubmitting = false;
+                    return;
+                }
 
                 // Формируем данные для Supabase (snake_case)
                 const submissionData = {
                     type: this.submitType,
-                    username: username,
-                    video_link: this.formData.videoLink,
-                    level_name: this.formData.levelName,
-                    comments: this.formData.comments || null,
+                    username: sanitizedData.username,
+                    video_link: sanitizedData.videoLink,
+                    level_name: sanitizedData.levelName,
+                    comments: sanitizedData.comments || null,
                     status: 'pending'
                 };
 
                 // Добавляем поля в зависимости от типа заявки
                 if (this.submitType === 'level') {
-                    submissionData.level_id = this.formData.levelId;
-                    submissionData.creators = this.formData.creators;
-                    submissionData.verifier = this.formData.verifier;
+                    submissionData.level_id = sanitizedData.levelId;
+                    submissionData.creators = sanitizedData.creators;
+                    submissionData.verifier = sanitizedData.verifier;
                     submissionData.password = this.formData.password || null;
                 } else {
-                    submissionData.progress = parseInt(this.formData.progress);
-                    submissionData.completed_on_mobile = this.formData.completedOnMobile;
+                    submissionData.progress = parseInt(sanitizedData.progress);
+                    submissionData.completed_on_mobile = sanitizedData.completedOnMobile;
                 }
 
                 // Сохраняем в Supabase

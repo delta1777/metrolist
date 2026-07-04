@@ -1,6 +1,7 @@
 import { store } from "../main.js";
-import { getSupabase, hashPassword } from "../supabase.js";
+import { getSupabase, hashPassword, verifyPassword } from "../supabase.js";
 import { realtimeManager } from "../realtime.js";
+import { validateUsername, validatePassword } from "../validation.js";
 
 export default {
     template: `
@@ -221,7 +222,7 @@ export default {
     },
     methods: {
         checkAuth() {
-            const userData = localStorage.getItem('userData');
+            const userData = sessionStorage.getItem('userData');
             if (userData) {
                 this.isLoggedIn = true;
                 this.userData = JSON.parse(userData);
@@ -316,7 +317,7 @@ export default {
 
                 // Обновляем локально
                 this.userData.username = trimmedUsername;
-                localStorage.setItem('userData', JSON.stringify(this.userData));
+                sessionStorage.setItem('userData', JSON.stringify(this.userData));
 
                 this.usernameMessage = 'Ник успешно изменен!';
                 this.usernameError = false;
@@ -336,6 +337,30 @@ export default {
         async handleAuth() {
             this.authMessage = '';
             this.authError = false;
+
+            // Валидация username
+            const usernameCheck = validateUsername(this.authData.username);
+            if (!usernameCheck.valid) {
+                this.authMessage = usernameCheck.error;
+                this.authError = true;
+                return;
+            }
+
+            // Валидация пароля
+            const passwordCheck = validatePassword(this.authData.password);
+            if (!passwordCheck.valid) {
+                this.authMessage = passwordCheck.error;
+                this.authError = true;
+                return;
+            }
+
+            // Предупреждение о слабом пароле при регистрации
+            if (this.isRegistering && passwordCheck.strength === 'weak') {
+                this.authMessage = 'Внимание: пароль слабый. Рекомендуем использовать более сложный пароль.';
+                this.authError = false;
+                // Даем пользователю 2 секунды увидеть предупреждение
+                await new Promise(resolve => setTimeout(resolve, 2000));
+            }
 
             const supabase = await getSupabase();
             if (!supabase) {
@@ -379,7 +404,7 @@ export default {
                     }
 
                     this.userData = { username: newUser.username, id: newUser.id };
-                    localStorage.setItem('userData', JSON.stringify(this.userData));
+                    sessionStorage.setItem('userData', JSON.stringify(this.userData));
 
                     this.isLoggedIn = true;
 
@@ -401,16 +426,26 @@ export default {
                         return;
                     }
 
-                    // Проверяем пароль
-                    const passwordHash = await hashPassword(this.authData.password);
-                    if (user.password_hash !== passwordHash) {
+                    // Проверяем пароль с новой функцией verifyPassword
+                    const isValid = await verifyPassword(this.authData.password, user.password_hash);
+
+                    if (!isValid) {
                         this.authMessage = 'Неверный пароль';
                         this.authError = true;
                         return;
                     }
 
+                    // Если пароль в старом формате (без соли), обновляем на новый
+                    if (!user.password_hash.includes(':')) {
+                        const newHash = await hashPassword(this.authData.password);
+                        await supabase
+                            .from('users')
+                            .update({ password_hash: newHash })
+                            .eq('username', user.username);
+                    }
+
                     this.userData = { username: user.username, id: user.id };
-                    localStorage.setItem('userData', JSON.stringify(this.userData));
+                    sessionStorage.setItem('userData', JSON.stringify(this.userData));
 
                     this.isLoggedIn = true;
                     this.loadUserData();
@@ -422,7 +457,7 @@ export default {
             }
         },
         handleLogout() {
-            localStorage.removeItem('userData');
+            sessionStorage.removeItem('userData');
             this.isLoggedIn = false;
             this.userData = { username: '' };
         },

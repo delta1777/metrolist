@@ -1,5 +1,5 @@
 import { store } from "../main.js";
-import { getSupabase } from "../supabase.js";
+import { getSupabase, verifyPassword } from "../supabase.js";
 import { realtimeManager } from "../realtime.js";
 
 // Импортируем конфигурацию (файл не попадет в git)
@@ -288,17 +288,62 @@ export default {
         }
     },
     methods: {
+        async generateAdminToken() {
+            // Генерируем токен на основе пароля и временной метки
+            const timestamp = Date.now();
+            const tokenData = `${ADMIN_CONFIG.passwordHash}-${timestamp}`;
+            const encoder = new TextEncoder();
+            const data = encoder.encode(tokenData);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            const token = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+
+            return { token, timestamp };
+        },
+        async verifyAdminToken() {
+            const storedToken = sessionStorage.getItem('adminToken');
+            const storedTimestamp = sessionStorage.getItem('adminTimestamp');
+
+            if (!storedToken || !storedTimestamp) {
+                return false;
+            }
+
+            // Проверяем что токен не истек (8 часов)
+            const now = Date.now();
+            const tokenAge = now - parseInt(storedTimestamp);
+            const EIGHT_HOURS = 8 * 60 * 60 * 1000;
+
+            if (tokenAge > EIGHT_HOURS) {
+                // Токен истек
+                sessionStorage.removeItem('adminToken');
+                sessionStorage.removeItem('adminTimestamp');
+                return false;
+            }
+
+            // Проверяем валидность токена
+            const tokenData = `${ADMIN_CONFIG.passwordHash}-${storedTimestamp}`;
+            const encoder = new TextEncoder();
+            const data = encoder.encode(tokenData);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            const expectedToken = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+
+            return storedToken === expectedToken;
+        },
         async handleLogin() {
             this.loginError = '';
 
             try {
-                // Хешируем введенный пароль
-                const hashedInput = await this.hashPassword(this.passwordInput);
+                // Проверяем пароль с использованием verifyPassword
+                const isValid = await verifyPassword(this.passwordInput, ADMIN_CONFIG.passwordHash);
 
-                // Сравниваем с хешем из конфига
-                if (hashedInput === ADMIN_CONFIG.passwordHash) {
+                if (isValid) {
+                    // Генерируем токен вместо простого флага
+                    const { token, timestamp } = await this.generateAdminToken();
+                    sessionStorage.setItem('adminToken', token);
+                    sessionStorage.setItem('adminTimestamp', timestamp.toString());
+
                     this.isAuthenticated = true;
-                    sessionStorage.setItem('adminAuth', 'true');
                     this.checkAdminAccess();
                 } else {
                     this.loginError = 'Неверный пароль';
@@ -310,15 +355,9 @@ export default {
 
             this.passwordInput = '';
         },
-        async hashPassword(password) {
-            const encoder = new TextEncoder();
-            const data = encoder.encode(password);
-            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-            const hashArray = Array.from(new Uint8Array(hashBuffer));
-            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-        },
         logout() {
-            sessionStorage.removeItem('adminAuth');
+            sessionStorage.removeItem('adminToken');
+            sessionStorage.removeItem('adminTimestamp');
             this.isAuthenticated = false;
             this.isAdmin = false;
             this.$router.push('/');
@@ -332,7 +371,7 @@ export default {
                 this.loadData();
             }
         },
-        checkAuthentication() {
+        async checkAuthentication() {
             // Проверяем что конфиг загружен
             this.configLoaded = ADMIN_CONFIG !== null;
 
@@ -340,8 +379,9 @@ export default {
                 return;
             }
 
-            const authSession = sessionStorage.getItem('adminAuth');
-            this.isAuthenticated = authSession === 'true';
+            // Проверяем валидность токена
+            const isValidToken = await this.verifyAdminToken();
+            this.isAuthenticated = isValidToken;
 
             if (this.isAuthenticated) {
                 this.checkAdminAccess();

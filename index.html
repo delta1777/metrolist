@@ -77,7 +77,7 @@
                         Отправить Уровень/Прохождение
                     </router-link>
                     <router-link class="nav__icon" to="/profile">
-                        <img src="assets/user.svg" alt="Profile" />
+                        <img :src="store.dark ? 'assets/user-light.svg' : 'assets/user.svg'" alt="Profile" />
                     </router-link>
                 </div>
             </nav>
