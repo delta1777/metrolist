@@ -19,7 +19,7 @@ jobs:
 
       - name: Create admin config from secrets
         run: |
-          cat > admin-config.js << EOF
+          cat > js/admin-config.js << EOF
           export const ADMIN_CONFIG = {
               passwordHash: '${{ secrets.ADMIN_PASSWORD_HASH }}',
               adminEmail: '${{ secrets.ADMIN_EMAIL }}'
