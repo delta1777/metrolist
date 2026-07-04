@@ -269,7 +269,7 @@
 .btn-submit {
     padding: 1rem 2rem;
     background: var(--color-on-background);
-    color: var(--color-background);
+    color: #000000;
     border: none;
     border-radius: 8px;
     font-size: 1rem;

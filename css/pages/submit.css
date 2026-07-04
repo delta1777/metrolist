@@ -11,6 +11,12 @@
 
 .page-submit.dark {
     background-color: var(--color-background);
+    min-height: 100vh;
+}
+
+body:has(.page-submit.dark) {
+    background-color: var(--color-background);
+    min-height: 100vh;
 }
 
 .submit-container {
