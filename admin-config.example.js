@@ -8,6 +8,6 @@ export const ADMIN_CONFIG = {
     // crypto.subtle.digest('SHA-256', new TextEncoder().encode('your-password')).then(h => console.log(Array.from(new Uint8Array(h)).map(b => b.toString(16).padStart(2, '0')).join('')))
     passwordHash: 'YOUR_PASSWORD_HASH_HERE',
 
-    // Ник администратора в GD
-    adminUsername: 'YourGDUsername'
+    // Ник администратора
+    adminUsername: 'YourUsername'
 };

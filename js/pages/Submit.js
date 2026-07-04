@@ -27,7 +27,7 @@ export default {
                 <form @submit.prevent="handleSubmit" class="submit-form">
                     <!-- Общие поля -->
                     <div class="form-group">
-                        <label for="username">Ваш ник в GD</label>
+                        <label for="username">Ваш ник</label>
                         <input
                             type="text"
                             id="username"

@@ -171,7 +171,7 @@ export default {
                         <table>
                             <thead>
                                 <tr>
-                                    <th>Ник в GD</th>
+                                    <th>Ник</th>
                                     <th>Дата регистрации</th>
                                     <th>Заявок</th>
                                     <th>Действия</th>

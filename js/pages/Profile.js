@@ -10,7 +10,7 @@ export default {
 
                     <form @submit.prevent="handleAuth">
                         <div class="form-group">
-                            <label for="username">Ник в GD</label>
+                            <label for="username">Ваш ник</label>
                             <input
                                 type="text"
                                 id="username"
