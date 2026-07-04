@@ -43,16 +43,17 @@
 
 .submit-type-btn.active {
     background: var(--primary);
-    color: #000000;
+    color: #ffffff;
 }
 
 .page-submit.dark .submit-type-btn {
-    color: var(--primary-dark);
-    border-color: var(--primary-dark);
+    color: var(--text-dark);
+    border-color: var(--text-dark);
+    background: transparent;
 }
 
 .page-submit.dark .submit-type-btn.active {
-    background: var(--primary-dark);
+    background: var(--text-dark);
     color: #000000;
 }
 
@@ -115,7 +116,7 @@
 .btn-submit {
     padding: 1rem 2rem;
     background: var(--primary);
-    color: #000000;
+    color: #ffffff;
     border: none;
     border-radius: 8px;
     font-size: 1rem;
@@ -135,7 +136,7 @@
 }
 
 .page-submit.dark .btn-submit {
-    background: var(--primary-dark);
+    background: var(--text-dark);
     color: #000000;
 }
 
