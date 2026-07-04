@@ -45,12 +45,13 @@
 }
 
 .page-submit.dark .submit-type-btn {
-    color: var(--text-dark);
+    color: var(--background-dark);
     border-color: var(--primary-dark);
 }
 
 .page-submit.dark .submit-type-btn.active {
     background: var(--primary-dark);
+    color: white;
 }
 
 .submit-form {
