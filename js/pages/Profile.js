@@ -19,7 +19,7 @@ export default {
                             />
                         </div>
 
-                        <div class="form-group" v-if="isRegistering">
+                        <div class="form-group">
                             <label for="password">Пароль</label>
                             <input
                                 type="password"
@@ -219,6 +219,14 @@ export default {
 
                     if (!user) {
                         this.authMessage = 'Пользователь не найден';
+                        this.authError = true;
+                        return;
+                    }
+
+                    // Проверяем пароль
+                    const hashedPassword = await this.hashPassword(this.authData.password);
+                    if (user.password !== hashedPassword) {
+                        this.authMessage = 'Неверный пароль';
                         this.authError = true;
                         return;
                     }
