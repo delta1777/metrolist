@@ -1,4 +1,5 @@
 import { store } from "../main.js";
+import { getSupabase } from "../supabase.js";
 
 export default {
     template: `
@@ -197,23 +198,54 @@ export default {
             this.submitMessage = '';
             this.submitError = false;
 
+            const supabase = await getSupabase();
+            if (!supabase) {
+                this.submitMessage = 'Ошибка подключения к базе данных';
+                this.submitError = true;
+                this.isSubmitting = false;
+                return;
+            }
+
             try {
                 const userData = JSON.parse(localStorage.getItem('userData') || '{}');
-                const submission = {
+                const username = this.formData.username || userData.username || 'anonymous';
+
+                // Формируем данные для Supabase (snake_case)
+                const submissionData = {
                     type: this.submitType,
-                    timestamp: new Date().toISOString(),
-                    ...this.formData,
-                    username: this.formData.username || userData.username || 'anonymous'
+                    username: username,
+                    video_link: this.formData.videoLink,
+                    level_name: this.formData.levelName,
+                    comments: this.formData.comments || null,
+                    status: 'pending'
                 };
 
-                // Сохранение заявки
-                const submissions = JSON.parse(localStorage.getItem('submissions') || '[]');
-                submission.id = Date.now() + Math.random();
-                submission.status = 'pending';
-                submissions.push(submission);
-                localStorage.setItem('submissions', JSON.stringify(submissions));
+                // Добавляем поля в зависимости от типа заявки
+                if (this.submitType === 'level') {
+                    submissionData.level_id = this.formData.levelId;
+                    submissionData.creators = this.formData.creators;
+                    submissionData.verifier = this.formData.verifier;
+                    submissionData.password = this.formData.password || null;
+                } else {
+                    submissionData.progress = parseInt(this.formData.progress);
+                    submissionData.completed_on_mobile = this.formData.completedOnMobile;
+                }
 
-                console.log('Submission:', submission);
+                // Сохраняем в Supabase
+                const { data, error } = await supabase
+                    .from('submissions')
+                    .insert([submissionData])
+                    .select()
+                    .single();
+
+                if (error) {
+                    console.error('Supabase error:', error);
+                    this.submitMessage = 'Ошибка при отправке заявки. Попробуйте снова.';
+                    this.submitError = true;
+                    return;
+                }
+
+                console.log('Submission created:', data);
 
                 this.submitMessage = 'Заявка успешно отправлена! Ожидайте проверки модерацией.';
                 this.resetForm();

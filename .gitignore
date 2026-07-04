@@ -16,7 +16,7 @@ js/firebase.js
 
 # Supabase конфигурация
 supabase-config.js
-js/supabase.js
+js/supabase-config.js
 
 # Конфигурация админ-панели
 admin-config.js

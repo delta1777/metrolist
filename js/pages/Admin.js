@@ -1,4 +1,5 @@
 import { store } from "../main.js";
+import { getSupabase } from "../supabase.js";
 
 // Импортируем конфигурацию (файл не попадет в git)
 let ADMIN_CONFIG = null;
@@ -301,27 +302,125 @@ export default {
                 this.checkAdminAccess();
             }
         },
-        loadData() {
-            this.submissions = JSON.parse(localStorage.getItem('submissions') || '[]');
-            this.accounts = JSON.parse(localStorage.getItem('users') || '[]');
-        },
-        updateSubmissionStatus(submissionId, status) {
-            const index = this.submissions.findIndex(s => s.id === submissionId);
-            if (index !== -1) {
-                this.submissions[index].status = status;
-                localStorage.setItem('submissions', JSON.stringify(this.submissions));
+        async loadData() {
+            const supabase = await getSupabase();
+            if (!supabase) return;
+
+            try {
+                // Загружаем заявки
+                const { data: submissions, error: submissionsError } = await supabase
+                    .from('submissions')
+                    .select('*')
+                    .order('created_at', { ascending: false });
+
+                if (submissionsError) {
+                    console.error('Error loading submissions:', submissionsError);
+                } else {
+                    // Преобразуем snake_case в camelCase для совместимости с шаблоном
+                    this.submissions = submissions.map(s => ({
+                        id: s.id,
+                        type: s.type,
+                        username: s.username,
+                        videoLink: s.video_link,
+                        levelName: s.level_name,
+                        levelId: s.level_id,
+                        creators: s.creators,
+                        verifier: s.verifier,
+                        password: s.password,
+                        progress: s.progress,
+                        completedOnMobile: s.completed_on_mobile,
+                        comments: s.comments,
+                        status: s.status,
+                        timestamp: s.created_at
+                    }));
+                }
+
+                // Загружаем аккаунты
+                const { data: users, error: usersError } = await supabase
+                    .from('users')
+                    .select('*')
+                    .order('created_at', { ascending: false });
+
+                if (usersError) {
+                    console.error('Error loading users:', usersError);
+                } else {
+                    this.accounts = users.map(u => ({
+                        username: u.username,
+                        createdAt: u.created_at
+                    }));
+                }
+            } catch (error) {
+                console.error('Error loading data:', error);
             }
         },
-        deleteSubmission(submissionId) {
-            if (confirm('Вы уверены, что хотите удалить эту заявку?')) {
-                this.submissions = this.submissions.filter(s => s.id !== submissionId);
-                localStorage.setItem('submissions', JSON.stringify(this.submissions));
+        async updateSubmissionStatus(submissionId, status) {
+            const supabase = await getSupabase();
+            if (!supabase) return;
+
+            try {
+                const { error } = await supabase
+                    .from('submissions')
+                    .update({ status: status, updated_at: new Date().toISOString() })
+                    .eq('id', submissionId);
+
+                if (error) {
+                    console.error('Error updating submission:', error);
+                    alert('Ошибка при обновлении статуса');
+                } else {
+                    // Обновляем локально
+                    const index = this.submissions.findIndex(s => s.id === submissionId);
+                    if (index !== -1) {
+                        this.submissions[index].status = status;
+                    }
+                }
+            } catch (error) {
+                console.error('Error updating submission:', error);
             }
         },
-        deleteAccount(username) {
-            if (confirm(`Вы уверены, что хотите удалить аккаунт ${username}?`)) {
-                this.accounts = this.accounts.filter(acc => acc.username !== username);
-                localStorage.setItem('users', JSON.stringify(this.accounts));
+        async deleteSubmission(submissionId) {
+            if (!confirm('Вы уверены, что хотите удалить эту заявку?')) return;
+
+            const supabase = await getSupabase();
+            if (!supabase) return;
+
+            try {
+                const { error } = await supabase
+                    .from('submissions')
+                    .delete()
+                    .eq('id', submissionId);
+
+                if (error) {
+                    console.error('Error deleting submission:', error);
+                    alert('Ошибка при удалении заявки');
+                } else {
+                    // Удаляем локально
+                    this.submissions = this.submissions.filter(s => s.id !== submissionId);
+                }
+            } catch (error) {
+                console.error('Error deleting submission:', error);
+            }
+        },
+        async deleteAccount(username) {
+            if (!confirm(`Вы уверены, что хотите удалить аккаунт ${username}?`)) return;
+
+            const supabase = await getSupabase();
+            if (!supabase) return;
+
+            try {
+                const { error } = await supabase
+                    .from('users')
+                    .delete()
+                    .eq('username', username);
+
+                if (error) {
+                    console.error('Error deleting user:', error);
+                    alert('Ошибка при удалении аккаунта');
+                } else {
+                    // Удаляем локально
+                    this.accounts = this.accounts.filter(acc => acc.username !== username);
+                }
+            } catch (error) {
+                console.error('Error deleting user:', error);
             }
         },
         getAccountSubmissions(username) {

@@ -26,6 +26,15 @@ jobs:
           };
           EOF
 
+      - name: Create Supabase config from secrets
+        run: |
+          cat > js/supabase-config.js << EOF
+          export const SUPABASE_CONFIG = {
+              url: '${{ secrets.SUPABASE_URL }}',
+              anonKey: '${{ secrets.SUPABASE_ANON_KEY }}'
+          };
+          EOF
+
       - name: Setup Pages
         uses: actions/configure-pages@v4
 

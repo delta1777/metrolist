@@ -1,4 +1,5 @@
 import { store } from "../main.js";
+import { getSupabase, hashPassword } from "../supabase.js";
 
 export default {
     template: `
@@ -185,55 +186,76 @@ export default {
             this.authMessage = '';
             this.authError = false;
 
+            const supabase = await getSupabase();
+            if (!supabase) {
+                this.authMessage = 'Ошибка подключения к базе данных';
+                this.authError = true;
+                return;
+            }
+
             try {
                 if (this.isRegistering) {
                     // Регистрация
-                    const users = JSON.parse(localStorage.getItem('users') || '[]');
+                    // Проверяем, существует ли пользователь
+                    const { data: existingUser } = await supabase
+                        .from('users')
+                        .select('username')
+                        .eq('username', this.authData.username)
+                        .single();
 
-                    if (users.find(u => u.username === this.authData.username)) {
+                    if (existingUser) {
                         this.authMessage = 'Пользователь с таким ником уже существует';
                         this.authError = true;
                         return;
                     }
 
-                    const newUser = {
-                        id: Date.now().toString(),
-                        username: this.authData.username,
-                        password: await this.hashPassword(this.authData.password),
-                        createdAt: new Date().toISOString()
-                    };
+                    // Создаём нового пользователя
+                    const passwordHash = await hashPassword(this.authData.password);
+                    const { data: newUser, error } = await supabase
+                        .from('users')
+                        .insert([{
+                            username: this.authData.username,
+                            password_hash: passwordHash
+                        }])
+                        .select()
+                        .single();
 
-                    users.push(newUser);
-                    localStorage.setItem('users', JSON.stringify(users));
+                    if (error) {
+                        console.error('Registration error:', error);
+                        this.authMessage = 'Ошибка при регистрации';
+                        this.authError = true;
+                        return;
+                    }
 
-                    this.userData = { username: newUser.username };
+                    this.userData = { username: newUser.username, id: newUser.id };
                     localStorage.setItem('userData', JSON.stringify(this.userData));
-                    localStorage.setItem('userId', newUser.id);
 
                     this.isLoggedIn = true;
                     this.loadUserData();
                 } else {
                     // Вход
-                    const users = JSON.parse(localStorage.getItem('users') || '[]');
-                    const user = users.find(u => u.username === this.authData.username);
+                    const { data: user, error } = await supabase
+                        .from('users')
+                        .select('*')
+                        .eq('username', this.authData.username)
+                        .single();
 
-                    if (!user) {
+                    if (error || !user) {
                         this.authMessage = 'Пользователь не найден';
                         this.authError = true;
                         return;
                     }
 
                     // Проверяем пароль
-                    const hashedPassword = await this.hashPassword(this.authData.password);
-                    if (user.password !== hashedPassword) {
+                    const passwordHash = await hashPassword(this.authData.password);
+                    if (user.password_hash !== passwordHash) {
                         this.authMessage = 'Неверный пароль';
                         this.authError = true;
                         return;
                     }
 
-                    this.userData = { username: user.username };
+                    this.userData = { username: user.username, id: user.id };
                     localStorage.setItem('userData', JSON.stringify(this.userData));
-                    localStorage.setItem('userId', user.id);
 
                     this.isLoggedIn = true;
                     this.loadUserData();
@@ -244,55 +266,58 @@ export default {
                 this.authError = true;
             }
         },
-        async hashPassword(password) {
-            const encoder = new TextEncoder();
-            const data = encoder.encode(password);
-            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-            const hashArray = Array.from(new Uint8Array(hashBuffer));
-            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-        },
         handleLogout() {
             localStorage.removeItem('userData');
-            localStorage.removeItem('userId');
             this.isLoggedIn = false;
             this.userData = { username: '' };
         },
-        loadUserData() {
-            const userId = localStorage.getItem('userId');
-            const submissions = JSON.parse(localStorage.getItem('submissions') || '[]');
+        async loadUserData() {
+            const supabase = await getSupabase();
+            if (!supabase) return;
 
-            // Фильтруем заявки текущего пользователя
-            const userSubmissions = submissions.filter(s =>
-                s.username === this.userData.username
-            );
+            try {
+                // Загружаем заявки пользователя
+                const { data: submissions, error } = await supabase
+                    .from('submissions')
+                    .select('*')
+                    .eq('username', this.userData.username)
+                    .order('created_at', { ascending: false });
 
-            // Разделяем на категории
-            this.pendingSubmissions = userSubmissions.filter(s => s.status === undefined || s.status === 'pending');
+                if (error) {
+                    console.error('Error loading submissions:', error);
+                    return;
+                }
 
-            this.userLevels = userSubmissions
-                .filter(s => s.type === 'level' && s.status === 'approved')
-                .map(s => ({
-                    id: s.timestamp,
-                    levelName: s.levelName,
-                    levelId: s.levelId,
-                    date: this.formatDate(s.timestamp),
-                    status: s.status || 'pending'
-                }));
+                // Разделяем на категории
+                this.pendingSubmissions = submissions.filter(s => s.status === 'pending');
 
-            this.userRecords = userSubmissions
-                .filter(s => s.type === 'record' && s.status === 'approved')
-                .map(s => ({
-                    id: s.timestamp,
-                    levelName: s.levelName,
-                    progress: s.progress,
-                    videoLink: s.videoLink,
-                    date: this.formatDate(s.timestamp)
-                }));
+                this.userLevels = submissions
+                    .filter(s => s.type === 'level' && s.status === 'approved')
+                    .map(s => ({
+                        id: s.id,
+                        levelName: s.level_name,
+                        levelId: s.level_id,
+                        date: this.formatDate(s.created_at),
+                        status: s.status
+                    }));
 
-            // Обновляем статистику
-            this.userStats.completedLevels = this.userRecords.length;
-            this.userStats.pendingSubmissions = this.pendingSubmissions.length;
-            this.userStats.totalScore = this.userRecords.length * 100; // Упрощенный подсчет
+                this.userRecords = submissions
+                    .filter(s => s.type === 'record' && s.status === 'approved')
+                    .map(s => ({
+                        id: s.id,
+                        levelName: s.level_name,
+                        progress: s.progress,
+                        videoLink: s.video_link,
+                        date: this.formatDate(s.created_at)
+                    }));
+
+                // Обновляем статистику
+                this.userStats.completedLevels = this.userRecords.length;
+                this.userStats.pendingSubmissions = this.pendingSubmissions.length;
+                this.userStats.totalScore = this.userRecords.length * 100;
+            } catch (error) {
+                console.error('Error loading user data:', error);
+            }
         },
         formatDate(timestamp) {
             const date = new Date(timestamp);
