@@ -86,6 +86,11 @@ body:has(.page-submit.dark) {
     transition: border-color 0.2s ease;
 }
 
+.form-group textarea {
+    resize: none;
+    min-height: 100px;
+}
+
 .form-group input:focus,
 .form-group textarea:focus {
     outline: none;
