@@ -230,7 +230,7 @@ export default {
                                 <p><strong>Создатель:</strong> {{ level.author }}</p>
                                 <p><strong>Верификатор:</strong> {{ level.verifier }}</p>
                                 <p><strong>Видео:</strong> <a :href="level.verification" target="_blank">{{ level.verification }}</a></p>
-                                <p><strong>Лучший прогресс:</strong> {{ level.best_progress || 0 }}%</p>
+                                <p><strong>Лучший прогресс:</strong> {{ formatProgress(level) }}</p>
                             </div>
 
                             <div class="level-actions">
@@ -261,16 +261,83 @@ export default {
                         <p><strong>{{ editingLevel.name }}</strong></p>
 
                         <div class="form-group">
-                            <label for="edit-progress">Лучший прогресс (%)</label>
+                            <label>
+                                <input
+                                    type="radio"
+                                    v-model="editData.progressType"
+                                    value="text"
+                                />
+                                Свободный ввод (например, 62%, 80-100, 80-100%)
+                            </label>
+                            <label>
+                                <input
+                                    type="radio"
+                                    v-model="editData.progressType"
+                                    value="single"
+                                />
+                                Одно число
+                            </label>
+                            <label>
+                                <input
+                                    type="radio"
+                                    v-model="editData.progressType"
+                                    value="range"
+                                />
+                                Диапазон
+                            </label>
+                        </div>
+
+                        <div v-if="editData.progressType === 'text'" class="form-group">
+                            <label for="edit-progress-text">Лучший прогресс</label>
                             <input
-                                type="number"
-                                id="edit-progress"
-                                v-model.number="editData.bestProgress"
-                                min="0"
-                                max="100"
-                                placeholder="Введите лучший прогресс (0-100)"
+                                type="text"
+                                id="edit-progress-text"
+                                v-model="editData.progressText"
+                                placeholder="Например: 62%, 80-100, 80-100%"
                                 class="form-input"
                             />
+                            <small>Можно писать в любом формате: 62%, 80-100, 80-100%</small>
+                        </div>
+
+                        <div v-if="editData.progressType === 'single'" class="form-group">
+                            <label for="edit-progress-single">Лучший прогресс (%)</label>
+                            <input
+                                type="number"
+                                id="edit-progress-single"
+                                v-model.number="editData.progressSingle"
+                                min="0"
+                                max="100"
+                                placeholder="85"
+                                class="form-input"
+                            />
+                        </div>
+
+                        <div v-if="editData.progressType === 'range'">
+                            <div class="form-group">
+                                <label for="edit-progress-start">Начальный процент (%)</label>
+                                <input
+                                    type="number"
+                                    id="edit-progress-start"
+                                    v-model.number="editData.progressStart"
+                                    min="0"
+                                    max="100"
+                                    placeholder="80"
+                                    class="form-input"
+                                />
+                            </div>
+
+                            <div class="form-group">
+                                <label for="edit-progress-end">Конечный процент (%)</label>
+                                <input
+                                    type="number"
+                                    id="edit-progress-end"
+                                    v-model.number="editData.progressEnd"
+                                    min="0"
+                                    max="100"
+                                    placeholder="100"
+                                    class="form-input"
+                                />
+                            </div>
                         </div>
                     </div>
 
@@ -312,17 +379,83 @@ export default {
                         </div>
 
                         <div v-if="approvalData.listType === 'future'" class="form-group">
-                            <label for="best-progress">Лучший прогресс (%)</label>
+                            <label>
+                                <input
+                                    type="radio"
+                                    v-model="approvalData.progressType"
+                                    value="text"
+                                />
+                                Свободный ввод (например, 62%, 80-100, 80-100%)
+                            </label>
+                            <label>
+                                <input
+                                    type="radio"
+                                    v-model="approvalData.progressType"
+                                    value="single"
+                                />
+                                Одно число
+                            </label>
+                            <label>
+                                <input
+                                    type="radio"
+                                    v-model="approvalData.progressType"
+                                    value="range"
+                                />
+                                Диапазон
+                            </label>
+                        </div>
+
+                        <div v-if="approvalData.listType === 'future' && approvalData.progressType === 'text'" class="form-group">
+                            <label for="progress-text">Лучший прогресс</label>
                             <input
-                                type="number"
-                                id="best-progress"
-                                v-model.number="approvalData.bestProgress"
-                                min="0"
-                                max="100"
-                                placeholder="Введите лучший прогресс (0-100)"
+                                type="text"
+                                id="progress-text"
+                                v-model="approvalData.progressText"
+                                placeholder="Например: 62%, 80-100, 80-100%"
                                 class="form-input"
                             />
-                            <small>Укажите лучший прогресс прохождения для будущего уровня</small>
+                            <small>Можно писать в любом формате: 62%, 80-100, 80-100%</small>
+                        </div>
+
+                        <div v-if="approvalData.listType === 'future' && approvalData.progressType === 'single'" class="form-group">
+                            <label for="progress-single">Лучший прогресс (%)</label>
+                            <input
+                                type="number"
+                                id="progress-single"
+                                v-model.number="approvalData.progressSingle"
+                                min="0"
+                                max="100"
+                                placeholder="85"
+                                class="form-input"
+                            />
+                        </div>
+
+                        <div v-if="approvalData.listType === 'future' && approvalData.progressType === 'range'">
+                            <div class="form-group">
+                                <label for="progress-start">Начальный процент (%)</label>
+                                <input
+                                    type="number"
+                                    id="progress-start"
+                                    v-model.number="approvalData.progressStart"
+                                    min="0"
+                                    max="100"
+                                    placeholder="80"
+                                    class="form-input"
+                                />
+                            </div>
+
+                            <div class="form-group">
+                                <label for="progress-end">Конечный процент (%)</label>
+                                <input
+                                    type="number"
+                                    id="progress-end"
+                                    v-model.number="approvalData.progressEnd"
+                                    min="0"
+                                    max="100"
+                                    placeholder="100"
+                                    class="form-input"
+                                />
+                            </div>
                         </div>
                     </div>
 
@@ -355,12 +488,20 @@ export default {
             approvalData: {
                 listType: 'main',
                 position: null,
-                bestProgress: 0
+                progressType: 'text',
+                progressText: '',
+                progressSingle: 0,
+                progressStart: 0,
+                progressEnd: 100
             },
             showEditDialog: false,
             editingLevel: null,
             editData: {
-                bestProgress: 0
+                progressType: 'text',
+                progressText: '',
+                progressSingle: 0,
+                progressStart: 0,
+                progressEnd: 100
             }
         };
     },
@@ -390,6 +531,29 @@ export default {
         }
     },
     methods: {
+        parseProgressText(text) {
+            // Парсим текстовый ввод прогресса
+            // Поддерживаемые форматы: "62%", "62", "80-100", "80-100%"
+            if (!text || text.trim() === '') {
+                return { start: 0, end: 0 };
+            }
+
+            const cleaned = text.trim().replace(/%/g, '');
+
+            // Проверяем на диапазон (содержит тире)
+            if (cleaned.includes('-')) {
+                const parts = cleaned.split('-').map(p => p.trim());
+                if (parts.length === 2) {
+                    const start = parseInt(parts[0]) || 0;
+                    const end = parseInt(parts[1]) || 0;
+                    return { start, end };
+                }
+            }
+
+            // Одно число
+            const num = parseInt(cleaned) || 0;
+            return { start: 0, end: num };
+        },
         async generateAdminToken() {
             // Генерируем токен на основе пароля и временной метки
             const timestamp = Date.now();
@@ -566,7 +730,11 @@ export default {
             this.currentSubmission = submission;
             this.approvalData.listType = submission.listType || 'main';
             this.approvalData.position = null;
-            this.approvalData.bestProgress = submission.bestProgress || 0;
+            this.approvalData.progressType = 'text';
+            this.approvalData.progressText = '';
+            this.approvalData.progressSingle = 0;
+            this.approvalData.progressStart = 0;
+            this.approvalData.progressEnd = 100;
             this.showApprovalDialog = true;
         },
         closeApprovalDialog() {
@@ -574,22 +742,44 @@ export default {
             this.currentSubmission = null;
             this.approvalData.listType = 'main';
             this.approvalData.position = null;
-            this.approvalData.bestProgress = 0;
+            this.approvalData.progressType = 'text';
+            this.approvalData.progressText = '';
+            this.approvalData.progressSingle = 0;
+            this.approvalData.progressStart = 0;
+            this.approvalData.progressEnd = 100;
         },
         async confirmApproval() {
             if (!this.currentSubmission) return;
+
+            let progressStart, progressEnd;
+
+            if (this.approvalData.progressType === 'text') {
+                // Парсим текстовый ввод
+                const parsed = this.parseProgressText(this.approvalData.progressText);
+                progressStart = parsed.start;
+                progressEnd = parsed.end;
+            } else if (this.approvalData.progressType === 'single') {
+                // Одно число: храним как 0 до этого числа
+                progressStart = 0;
+                progressEnd = this.approvalData.progressSingle;
+            } else {
+                // Диапазон
+                progressStart = this.approvalData.progressStart;
+                progressEnd = this.approvalData.progressEnd;
+            }
 
             await this.updateSubmissionStatus(
                 this.currentSubmission.id,
                 'approved',
                 this.approvalData.listType,
                 this.approvalData.position,
-                this.approvalData.bestProgress
+                progressStart,
+                progressEnd
             );
 
             this.closeApprovalDialog();
         },
-        async updateSubmissionStatus(submissionId, status, listType = 'main', position = null, bestProgress = 0) {
+        async updateSubmissionStatus(submissionId, status, listType = 'main', position = null, progressStart = 0, progressEnd = 100) {
             const supabase = await getSupabase();
             if (!supabase) return;
 
@@ -659,9 +849,10 @@ export default {
                                 list_type: listType
                             };
 
-                            // Для будущих уровней добавляем best_progress
+                            // Для будущих уровней добавляем progress_start и progress_end
                             if (listType === 'future') {
-                                levelData.best_progress = bestProgress || 0;
+                                levelData.progress_start = progressStart || 0;
+                                levelData.progress_end = progressEnd || 100;
                             }
 
                             const { error: insertError } = await supabase
@@ -832,6 +1023,22 @@ export default {
             if (!timestamp) return 'N/A';
             return new Date(timestamp).toLocaleString('ru-RU');
         },
+        formatProgress(level) {
+            const start = level.progress_start || 0;
+            const end = level.progress_end || 0;
+
+            if (start === 0 && end === 0) {
+                return '0%';
+            } else if (start === 0 && end !== 100) {
+                // Одно число (лучший прогресс)
+                return `${end}%`;
+            } else if (start === 0 && end === 100) {
+                return '0-100%';
+            } else {
+                // Диапазон
+                return `${start}-${end}%`;
+            }
+        },
         setupRealtime() {
             // Подписываемся на изменения в таблице submissions
             realtimeManager.subscribe('submissions', (payload) => {
@@ -891,13 +1098,40 @@ export default {
         },
         editFutureLevel(level) {
             this.editingLevel = level;
-            this.editData.bestProgress = level.best_progress || 0;
+
+            // Определяем тип прогресса
+            const start = level.progress_start || 0;
+            const end = level.progress_end || 0;
+
+            // По умолчанию используем текстовый ввод с текущим значением
+            this.editData.progressType = 'text';
+
+            if (start === 0 && end === 0) {
+                this.editData.progressText = '0%';
+            } else if (start === 0 && end !== 100) {
+                // Одно число
+                this.editData.progressText = `${end}%`;
+            } else if (start === 0 && end === 100) {
+                this.editData.progressText = '0-100%';
+            } else {
+                // Диапазон
+                this.editData.progressText = `${start}-${end}%`;
+            }
+
+            this.editData.progressSingle = end;
+            this.editData.progressStart = start;
+            this.editData.progressEnd = end;
+
             this.showEditDialog = true;
         },
         closeEditDialog() {
             this.showEditDialog = false;
             this.editingLevel = null;
-            this.editData.bestProgress = 0;
+            this.editData.progressType = 'text';
+            this.editData.progressText = '';
+            this.editData.progressSingle = 0;
+            this.editData.progressStart = 0;
+            this.editData.progressEnd = 100;
         },
         async confirmEdit() {
             if (!this.editingLevel) return;
@@ -905,10 +1139,30 @@ export default {
             const supabase = await getSupabase();
             if (!supabase) return;
 
+            let progressStart, progressEnd;
+
+            if (this.editData.progressType === 'text') {
+                // Парсим текстовый ввод
+                const parsed = this.parseProgressText(this.editData.progressText);
+                progressStart = parsed.start;
+                progressEnd = parsed.end;
+            } else if (this.editData.progressType === 'single') {
+                // Одно число: храним как 0 до этого числа
+                progressStart = 0;
+                progressEnd = this.editData.progressSingle;
+            } else {
+                // Диапазон
+                progressStart = this.editData.progressStart;
+                progressEnd = this.editData.progressEnd;
+            }
+
             try {
                 const { error } = await supabase
                     .from('levels')
-                    .update({ best_progress: this.editData.bestProgress })
+                    .update({
+                        progress_start: progressStart,
+                        progress_end: progressEnd
+                    })
                     .eq('id', this.editingLevel.id);
 
                 if (error) {
@@ -920,7 +1174,8 @@ export default {
                 // Обновляем локально
                 const index = this.futureLevels.findIndex(l => l.id === this.editingLevel.id);
                 if (index !== -1) {
-                    this.futureLevels[index].best_progress = this.editData.bestProgress;
+                    this.futureLevels[index].progress_start = progressStart;
+                    this.futureLevels[index].progress_end = progressEnd;
                 }
 
                 alert('Лучший прогресс обновлен!');

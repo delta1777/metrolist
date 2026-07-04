@@ -34,7 +34,7 @@ export default {
                         </div>
                         <div class="progress-info">
                             <span class="label">Лучший прогресс</span>
-                            <span class="progress">{{ level.progress }}%</span>
+                            <span class="progress">{{ level.progress }}</span>
                         </div>
                     </div>
                 </div>
@@ -51,13 +51,31 @@ export default {
             if (list) {
                 this.levels = list.map(([level, err]) => {
                     if (err) return null;
+
+                    // Форматируем прогресс
+                    const start = level.progress_start || 0;
+                    const end = level.progress_end || 0;
+                    let progressText;
+
+                    if (start === 0 && end === 0) {
+                        progressText = '0%';
+                    } else if (start === 0 && end !== 100) {
+                        // Одно число (лучший прогресс)
+                        progressText = `${end}%`;
+                    } else if (start === 0 && end === 100) {
+                        progressText = '0-100%';
+                    } else {
+                        // Диапазон
+                        progressText = `${start}-${end}%`;
+                    }
+
                     return {
                         id: level.id,
                         name: level.name,
                         creator: level.author,
                         verifier: level.verifier,
                         showcase: level.verification,
-                        progress: level.best_progress || 0
+                        progress: progressText
                     };
                 }).filter(l => l !== null);
             }
