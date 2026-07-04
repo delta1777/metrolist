@@ -87,6 +87,26 @@
     color: var(--color-on-background);
 }
 
+.header-actions {
+    display: flex;
+    gap: 1rem;
+}
+
+.btn-admin {
+    padding: 0.5rem 1.5rem;
+    background: var(--color-primary-solid);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.btn-admin:hover {
+    opacity: 0.9;
+}
+
 .btn-logout {
     padding: 0.5rem 1.5rem;
     background: #f44336;
@@ -100,6 +120,28 @@
 
 .btn-logout:hover {
     background: #d32f2f;
+}
+
+.username-section {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.btn-edit-username {
+    padding: 0.5rem 1rem;
+    background: var(--color-background);
+    color: var(--color-on-background);
+    border: 2px solid var(--color-on-background);
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+}
+
+.btn-edit-username:hover {
+    background: var(--color-on-background);
+    color: var(--color-background);
 }
 
 .profile-info {
@@ -294,6 +336,16 @@
         align-items: flex-start;
     }
 
+    .header-actions {
+        width: 100%;
+        flex-direction: column;
+    }
+
+    .username-section {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
     .stats-grid {
         grid-template-columns: 1fr;
     }
@@ -306,3 +358,112 @@
         gap: 0.5rem;
     }
 }
+
+/* Диалог изменения ника */
+.dialog-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 1rem;
+}
+
+.dialog-box {
+    background: var(--color-background-hover);
+    border-radius: 12px;
+    padding: 2rem;
+    max-width: 500px;
+    width: 100%;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+.dialog-box h2 {
+    margin-bottom: 1.5rem;
+    color: var(--color-on-background);
+}
+
+.dialog-content {
+    margin-bottom: 2rem;
+}
+
+.dialog-content p {
+    margin-bottom: 1.5rem;
+    color: var(--color-on-background);
+}
+
+.dialog-content .form-group {
+    margin-bottom: 1rem;
+}
+
+.dialog-content label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: var(--color-on-background);
+}
+
+.dialog-content .form-input {
+    width: 100%;
+    padding: 0.75rem;
+    background: var(--color-background);
+    color: var(--color-on-background);
+    border: 2px solid var(--color-on-background);
+    border-radius: 8px;
+    font-size: 1rem;
+}
+
+.username-message {
+    padding: 0.75rem;
+    border-radius: 8px;
+    text-align: center;
+    font-weight: 600;
+    background: #4caf50;
+    color: white;
+}
+
+.username-message.error {
+    background: #f44336;
+}
+
+.dialog-actions {
+    display: flex;
+    gap: 1rem;
+}
+
+.dialog-actions button {
+    flex: 1;
+    padding: 0.75rem;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 1rem;
+    transition: all 0.2s;
+}
+
+.btn-save {
+    background: var(--color-primary-solid);
+    color: white;
+}
+
+.btn-save:hover {
+    opacity: 0.9;
+}
+
+.btn-cancel {
+    background: var(--color-background);
+    color: var(--color-on-background);
+    border: 2px solid var(--color-on-background) !important;
+}
+
+.btn-cancel:hover {
+    background: var(--color-on-background);
+    color: var(--color-background);
+}
+

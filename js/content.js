@@ -1,56 +1,86 @@
 import { round, score } from './score.js';
+import { getSupabase } from './supabase.js';
 
 /**
- * Path to directory containing `_list.json` and all levels
+ * Fetch list from Supabase
+ * @param {string} listType - 'main', 'challenge', or 'future'
  */
-const dir ='data';
+export async function fetchList(listType = 'main') {
+    const supabase = await getSupabase();
+    if (!supabase) {
+        console.error('Failed to connect to Supabase');
+        return null;
+    }
 
-export async function fetchList() {
-    const listResult = await fetch(dir + '/list.json');
     try {
-        const list = await listResult.json();
-        return await Promise.all(
-            list.map(async (path, rank) => {
-                const levelResult = await fetch(dir + '/' + path + '.json');
-                try {
-                    const level = await levelResult.json();
-                    return [
-                        {
-                            ...level,
-                            path,
-                            records: level.records.sort(
-                                (a, b) => b.percent - a.percent,
-                            ),
-                        },
-                        null,
-                    ];
-                } catch {
-                    console.error(`Failed to load level #${rank + 1} ${path}.`);
-                    return [null, path];
+        // Получаем уровни из базы данных
+        const { data: levels, error: levelsError } = await supabase
+            .from('levels')
+            .select('*')
+            .eq('list_type', listType)
+            .order('position', { ascending: true });
+
+        if (levelsError) {
+            console.error('Failed to load levels:', levelsError);
+            return null;
+        }
+
+        // Для каждого уровня получаем его рекорды
+        const list = await Promise.all(
+            levels.map(async (level) => {
+                const { data: records, error: recordsError } = await supabase
+                    .from('records')
+                    .select('*')
+                    .eq('level_id', level.id);
+
+                if (recordsError) {
+                    console.error(`Failed to load records for level ${level.name}:`, recordsError);
+                    return [null, level.name];
                 }
-            }),
+
+                return [
+                    {
+                        id: level.id,
+                        name: level.name,
+                        author: level.author,
+                        creators: level.creators,
+                        verifier: level.verifier,
+                        verification: level.verification,
+                        percentToQualify: level.percent_to_qualify,
+                        password: level.password,
+                        records: records.map(r => ({
+                            user: r.username,
+                            link: r.link,
+                            percent: r.percent,
+                            hz: r.hz,
+                            mobile: r.mobile
+                        })).sort((a, b) => b.percent - a.percent),
+                    },
+                    null,
+                ];
+            })
         );
-    } catch {
-        console.error(`это пиздец.`);
+
+        return list;
+    } catch (error) {
+        console.error('Failed to fetch list:', error);
         return null;
     }
 }
 
 export async function fetchEditors() {
-    try {
-        const editorsResults = await fetch(`${dir}/editors.json`);
-        const editors = await editorsResults.json();
-        return editors;
-    } catch {
-        return null;
-    }
+    // Editors.json больше не используется
+    // Можно добавить таблицу editors в базу данных при необходимости
+    return null;
 }
 
 export async function fetchLeaderboard() {
-    const list = await fetchList();
+    const list = await fetchList('main');
+    if (!list) return [[], []];
 
     const scoreMap = {};
     const errs = [];
+
     list.forEach(([level, err], rank) => {
         if (err) {
             errs.push(err);

@@ -1,5 +1,6 @@
 import { store } from "../main.js";
 import { getSupabase, hashPassword } from "../supabase.js";
+import { realtimeManager } from "../realtime.js";
 
 export default {
     template: `
@@ -54,12 +55,18 @@ export default {
             <div v-else class="profile-container">
                 <div class="profile-header">
                     <h1 class="type-display-lg">Профиль игрока</h1>
-                    <button @click="handleLogout" class="btn-logout">Выйти</button>
+                    <div class="header-actions">
+                        <button v-if="isAdmin" @click="goToAdmin" class="btn-admin">Админ-панель</button>
+                        <button @click="handleLogout" class="btn-logout">Выйти</button>
+                    </div>
                 </div>
 
                 <div class="profile-info">
                     <div class="info-card">
-                        <h2 class="type-title-lg">{{ userData.username }}</h2>
+                        <div class="username-section">
+                            <h2 class="type-title-lg">{{ userData.username }}</h2>
+                            <button @click="showUsernameDialog = true" class="btn-edit-username">✏️ Изменить ник</button>
+                        </div>
                     </div>
 
                     <div class="stats-grid">
@@ -141,6 +148,38 @@ export default {
                     </div>
                 </div>
             </div>
+
+            <!-- Диалог изменения ника -->
+            <div v-if="showUsernameDialog" class="dialog-overlay" @click="closeUsernameDialog">
+                <div class="dialog-box" @click.stop>
+                    <h2 class="type-title-lg">Изменить ник</h2>
+
+                    <div class="dialog-content">
+                        <p>Текущий ник: <strong>{{ userData.username }}</strong></p>
+
+                        <div class="form-group">
+                            <label for="new-username">Новый ник</label>
+                            <input
+                                type="text"
+                                id="new-username"
+                                v-model="newUsername"
+                                placeholder="Введите новый ник"
+                                class="form-input"
+                                required
+                            />
+                        </div>
+
+                        <div v-if="usernameMessage" class="username-message" :class="{ error: usernameError }">
+                            {{ usernameMessage }}
+                        </div>
+                    </div>
+
+                    <div class="dialog-actions">
+                        <button @click="changeUsername" class="btn-save">Сохранить</button>
+                        <button @click="closeUsernameDialog" class="btn-cancel">Отмена</button>
+                    </div>
+                </div>
+            </div>
         </main>
     `,
     data() {
@@ -148,6 +187,7 @@ export default {
             store,
             isLoggedIn: false,
             isRegistering: false,
+            isAdmin: false,
             authData: {
                 username: '',
                 password: ''
@@ -165,13 +205,18 @@ export default {
             userLevels: [],
             pendingSubmissions: [],
             authMessage: '',
-            authError: false
+            authError: false,
+            showUsernameDialog: false,
+            newUsername: '',
+            usernameMessage: '',
+            usernameError: false
         };
     },
     mounted() {
         this.checkAuth();
         if (this.isLoggedIn) {
             this.loadUserData();
+            this.checkIfAdmin();
         }
     },
     methods: {
@@ -180,6 +225,112 @@ export default {
             if (userData) {
                 this.isLoggedIn = true;
                 this.userData = JSON.parse(userData);
+            }
+        },
+        async checkIfAdmin() {
+            try {
+                const configModule = await import('../admin-config.js');
+                const ADMIN_CONFIG = configModule.ADMIN_CONFIG;
+
+                if (this.userData.username === ADMIN_CONFIG.adminUsername) {
+                    this.isAdmin = true;
+                }
+            } catch (error) {
+                // Конфиг не найден, пользователь не админ
+                this.isAdmin = false;
+            }
+        },
+        goToAdmin() {
+            this.$router.push('/admin');
+        },
+        closeUsernameDialog() {
+            this.showUsernameDialog = false;
+            this.newUsername = '';
+            this.usernameMessage = '';
+            this.usernameError = false;
+        },
+        async changeUsername() {
+            this.usernameMessage = '';
+            this.usernameError = false;
+
+            if (!this.newUsername || this.newUsername.trim() === '') {
+                this.usernameMessage = 'Введите новый ник';
+                this.usernameError = true;
+                return;
+            }
+
+            const trimmedUsername = this.newUsername.trim();
+
+            if (trimmedUsername === this.userData.username) {
+                this.usernameMessage = 'Новый ник совпадает с текущим';
+                this.usernameError = true;
+                return;
+            }
+
+            const supabase = await getSupabase();
+            if (!supabase) {
+                this.usernameMessage = 'Ошибка подключения к базе данных';
+                this.usernameError = true;
+                return;
+            }
+
+            try {
+                // Проверяем, не занят ли новый ник
+                const { data: existingUser } = await supabase
+                    .from('users')
+                    .select('username')
+                    .eq('username', trimmedUsername)
+                    .single();
+
+                if (existingUser) {
+                    this.usernameMessage = 'Этот ник уже занят';
+                    this.usernameError = true;
+                    return;
+                }
+
+                const oldUsername = this.userData.username;
+
+                // Обновляем ник в таблице users
+                const { error: updateUserError } = await supabase
+                    .from('users')
+                    .update({ username: trimmedUsername })
+                    .eq('username', oldUsername);
+
+                if (updateUserError) {
+                    this.usernameMessage = 'Ошибка при обновлении ника';
+                    this.usernameError = true;
+                    return;
+                }
+
+                // Обновляем ник во всех submissions
+                await supabase
+                    .from('submissions')
+                    .update({ username: trimmedUsername })
+                    .eq('username', oldUsername);
+
+                // Обновляем ник во всех records
+                await supabase
+                    .from('records')
+                    .update({ username: trimmedUsername })
+                    .eq('username', oldUsername);
+
+                // Обновляем локально
+                this.userData.username = trimmedUsername;
+                localStorage.setItem('userData', JSON.stringify(this.userData));
+
+                this.usernameMessage = 'Ник успешно изменен!';
+                this.usernameError = false;
+
+                // Закрываем диалог через 2 секунды
+                setTimeout(() => {
+                    this.closeUsernameDialog();
+                    this.loadUserData(); // Перезагружаем данные
+                }, 2000);
+
+            } catch (error) {
+                console.error('Error changing username:', error);
+                this.usernameMessage = 'Произошла ошибка';
+                this.usernameError = true;
             }
         },
         async handleAuth() {
@@ -231,6 +382,10 @@ export default {
                     localStorage.setItem('userData', JSON.stringify(this.userData));
 
                     this.isLoggedIn = true;
+
+                    // Мигрируем старые прохождения по нику
+                    await this.migrateUserRecords(newUser.username);
+
                     this.loadUserData();
                 } else {
                     // Вход
@@ -270,6 +425,81 @@ export default {
             localStorage.removeItem('userData');
             this.isLoggedIn = false;
             this.userData = { username: '' };
+        },
+        async migrateUserRecords(username) {
+            const supabase = await getSupabase();
+            if (!supabase) return;
+
+            try {
+                const migratedRecords = [];
+
+                // Получаем все рекорды этого пользователя из базы данных
+                const { data: existingRecords, error: recordsError } = await supabase
+                    .from('records')
+                    .select('level_id, percent, link, mobile, hz')
+                    .eq('username', username);
+
+                if (recordsError) {
+                    console.error('Error fetching existing records:', recordsError);
+                    return;
+                }
+
+                // Для каждого рекорда проверяем, есть ли уже заявка
+                for (const record of existingRecords) {
+                    const { data: existingSubmission } = await supabase
+                        .from('submissions')
+                        .select('id')
+                        .eq('username', username)
+                        .eq('level_id', record.level_id)
+                        .eq('progress', record.percent)
+                        .eq('type', 'record')
+                        .eq('status', 'approved')
+                        .single();
+
+                    if (!existingSubmission) {
+                        // Получаем информацию об уровне
+                        const { data: level } = await supabase
+                            .from('levels')
+                            .select('name, id')
+                            .eq('id', record.level_id)
+                            .single();
+
+                        if (level) {
+                            // Создаём одобренную заявку
+                            const { error: insertError } = await supabase
+                                .from('submissions')
+                                .insert([{
+                                    type: 'record',
+                                    username: username,
+                                    level_name: level.name,
+                                    level_id: level.id,
+                                    video_link: record.link || '',
+                                    progress: record.percent,
+                                    completed_on_mobile: record.mobile || false,
+                                    comments: record.hz ? `${record.hz} hz` : '',
+                                    status: 'approved',
+                                    created_at: new Date().toISOString()
+                                }]);
+
+                            if (!insertError) {
+                                migratedRecords.push({
+                                    levelName: level.name,
+                                    percent: record.percent
+                                });
+                            }
+                        }
+                    }
+                }
+
+                if (migratedRecords.length > 0) {
+                    console.log(`Migrated ${migratedRecords.length} records for ${username}`);
+                    this.authMessage = `Добро пожаловать! Найдено и привязано ${migratedRecords.length} прохождений`;
+                    this.authError = false;
+                }
+            } catch (error) {
+                console.error('Migration error:', error);
+                // Не показываем ошибку пользователю, т.к. это не критично
+            }
         },
         async loadUserData() {
             const supabase = await getSupabase();
@@ -334,6 +564,50 @@ export default {
                 rejected: 'Отклонено'
             };
             return statusMap[status] || 'На рассмотрении';
+        },
+        setupRealtime() {
+            // Подписываемся на изменения в submissions для текущего пользователя
+            realtimeManager.subscribe('submissions', (payload) => {
+                const { eventType, new: newRecord, old: oldRecord } = payload;
+
+                // Проверяем, относится ли изменение к текущему пользователю
+                const isCurrentUser = newRecord?.username === this.userData.username ||
+                                     oldRecord?.username === this.userData.username;
+
+                if (!isCurrentUser) return;
+
+                if (eventType === 'INSERT' || eventType === 'UPDATE' || eventType === 'DELETE') {
+                    // Перезагружаем данные пользователя
+                    this.loadUserData();
+                }
+            });
+
+            // Подписываемся на изменения в records для текущего пользователя
+            realtimeManager.subscribe('records', (payload) => {
+                const { eventType, new: newRecord, old: oldRecord } = payload;
+
+                const isCurrentUser = newRecord?.username === this.userData.username ||
+                                     oldRecord?.username === this.userData.username;
+
+                if (!isCurrentUser) return;
+
+                if (eventType === 'INSERT' || eventType === 'UPDATE' || eventType === 'DELETE') {
+                    // Перезагружаем данные пользователя
+                    this.loadUserData();
+                }
+            });
         }
+    },
+    mounted() {
+        this.checkAuth();
+        if (this.isLoggedIn) {
+            this.loadUserData();
+            this.checkIfAdmin();
+            this.setupRealtime();
+        }
+    },
+    beforeUnmount() {
+        // Отписываемся от всех обновлений при закрытии страницы
+        realtimeManager.unsubscribeAll();
     }
 };

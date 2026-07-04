@@ -1,5 +1,6 @@
 import { store } from "../main.js";
 import { getSupabase } from "../supabase.js";
+import { realtimeManager } from "../realtime.js";
 
 // Импортируем конфигурацию (файл не попадет в git)
 let ADMIN_CONFIG = null;
@@ -129,7 +130,7 @@ export default {
                             <div class="submission-actions">
                                 <button
                                     v-if="submission.status === 'pending'"
-                                    @click="updateSubmissionStatus(submission.id, 'approved')"
+                                    @click="openApprovalDialog(submission)"
                                     class="btn-approve"
                                 >
                                     Одобрить
@@ -198,6 +199,44 @@ export default {
                     </div>
                 </div>
             </div>
+
+            <!-- Диалог одобрения уровня -->
+            <div v-if="showApprovalDialog" class="dialog-overlay" @click="closeApprovalDialog">
+                <div class="dialog-box" @click.stop>
+                    <h2 class="type-title-lg">Одобрить уровень</h2>
+
+                    <div class="dialog-content">
+                        <p><strong>{{ currentSubmission.levelName }}</strong></p>
+
+                        <div class="form-group">
+                            <label for="list-type">Выберите список</label>
+                            <select id="list-type" v-model="approvalData.listType" class="form-select">
+                                <option value="main">Main List (Основной)</option>
+                                <option value="challenge">Challenge List (Челлендж)</option>
+                                <option value="future">Future List (Будущий)</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="position">Позиция в списке</label>
+                            <input
+                                type="number"
+                                id="position"
+                                v-model.number="approvalData.position"
+                                min="1"
+                                placeholder="Введите позицию (1, 2, 3...)"
+                                class="form-input"
+                            />
+                            <small>Оставьте пустым для автоматической позиции в конце списка</small>
+                        </div>
+                    </div>
+
+                    <div class="dialog-actions">
+                        <button @click="confirmApproval" class="btn-approve">Одобрить</button>
+                        <button @click="closeApprovalDialog" class="btn-cancel">Отмена</button>
+                    </div>
+                </div>
+            </div>
         </main>
     `,
     data() {
@@ -214,7 +253,13 @@ export default {
             accounts: [],
             filterType: 'all',
             filterStatus: 'all',
-            searchQuery: ''
+            searchQuery: '',
+            showApprovalDialog: false,
+            currentSubmission: null,
+            approvalData: {
+                listType: 'main',
+                position: null
+            }
         };
     },
     computed: {
@@ -353,11 +398,183 @@ export default {
                 console.error('Error loading data:', error);
             }
         },
-        async updateSubmissionStatus(submissionId, status) {
+        openApprovalDialog(submission) {
+            if (submission.type !== 'level') {
+                // Для прохождений просто одобряем без диалога
+                this.updateSubmissionStatus(submission.id, 'approved');
+                return;
+            }
+
+            // Для уровней открываем диалог
+            this.currentSubmission = submission;
+            this.approvalData.listType = 'main';
+            this.approvalData.position = null;
+            this.showApprovalDialog = true;
+        },
+        closeApprovalDialog() {
+            this.showApprovalDialog = false;
+            this.currentSubmission = null;
+            this.approvalData.listType = 'main';
+            this.approvalData.position = null;
+        },
+        async confirmApproval() {
+            if (!this.currentSubmission) return;
+
+            await this.updateSubmissionStatus(
+                this.currentSubmission.id,
+                'approved',
+                this.approvalData.listType,
+                this.approvalData.position
+            );
+
+            this.closeApprovalDialog();
+        },
+        async updateSubmissionStatus(submissionId, status, listType = 'main', position = null) {
             const supabase = await getSupabase();
             if (!supabase) return;
 
             try {
+                // Находим заявку
+                const submission = this.submissions.find(s => s.id === submissionId);
+                if (!submission) {
+                    alert('Заявка не найдена');
+                    return;
+                }
+
+                // Если одобряем, добавляем в базу данных
+                if (status === 'approved') {
+                    if (submission.type === 'level') {
+                        // Проверяем, не существует ли уже уровень с таким ID
+                        const { data: existingLevel } = await supabase
+                            .from('levels')
+                            .select('id')
+                            .eq('id', submission.levelId)
+                            .single();
+
+                        if (!existingLevel) {
+                            // Определяем позицию
+                            let finalPosition = position;
+
+                            if (!finalPosition || finalPosition < 1) {
+                                // Получаем текущую максимальную позицию для выбранного списка
+                                const { data: maxPosData } = await supabase
+                                    .from('levels')
+                                    .select('position')
+                                    .eq('list_type', listType)
+                                    .order('position', { ascending: false })
+                                    .limit(1);
+
+                                finalPosition = maxPosData && maxPosData.length > 0 ? maxPosData[0].position + 1 : 1;
+                            } else {
+                                // Если указана конкретная позиция, сдвигаем все уровни начиная с этой позиции
+                                const { data: levelsToShift } = await supabase
+                                    .from('levels')
+                                    .select('id, position')
+                                    .eq('list_type', listType)
+                                    .gte('position', finalPosition)
+                                    .order('position', { ascending: false });
+
+                                if (levelsToShift && levelsToShift.length > 0) {
+                                    // Сдвигаем позиции вниз
+                                    for (const level of levelsToShift) {
+                                        await supabase
+                                            .from('levels')
+                                            .update({ position: level.position + 1 })
+                                            .eq('id', level.id);
+                                    }
+                                }
+                            }
+
+                            // Добавляем новый уровень в базу данных
+                            const { error: insertError } = await supabase
+                                .from('levels')
+                                .insert([{
+                                    id: submission.levelId,
+                                    name: submission.levelName,
+                                    author: submission.creators,
+                                    creators: submission.creators ? submission.creators.split(',').map(c => c.trim()) : [],
+                                    verifier: submission.verifier || submission.username,
+                                    verification: submission.videoLink,
+                                    percent_to_qualify: 100,
+                                    password: submission.password || 'Not Copyable',
+                                    position: finalPosition,
+                                    list_type: listType
+                                }]);
+
+                            if (insertError) {
+                                console.error('Error inserting level:', insertError);
+                                alert(`Ошибка при добавлении уровня: ${insertError.message}`);
+                                return;
+                            }
+
+                            const listNames = {
+                                'main': 'Main List',
+                                'challenge': 'Challenge List',
+                                'future': 'Future List'
+                            };
+                            alert(`Уровень одобрен и добавлен в ${listNames[listType]} на позицию ${finalPosition}!`);
+                        } else {
+                            alert('Уровень уже существует в базе данных');
+                        }
+
+                    } else if (submission.type === 'record') {
+                        // Получаем уровень по имени
+                        const { data: level, error: levelError } = await supabase
+                            .from('levels')
+                            .select('*')
+                            .eq('name', submission.levelName)
+                            .single();
+
+                        if (levelError || !level) {
+                            alert('Уровень не найден в базе данных');
+                            return;
+                        }
+
+                        // Проверяем, нет ли уже такого прохождения
+                        const { data: existingRecord } = await supabase
+                            .from('records')
+                            .select('id')
+                            .eq('level_id', level.id)
+                            .eq('username', submission.username)
+                            .eq('percent', submission.progress)
+                            .single();
+
+                        if (!existingRecord) {
+                            // Извлекаем hz из комментариев
+                            let hz = null;
+                            if (submission.comments && submission.comments.includes('hz')) {
+                                const hzMatch = submission.comments.match(/(\d+)\s*hz/i);
+                                if (hzMatch) {
+                                    hz = parseInt(hzMatch[1]);
+                                }
+                            }
+
+                            // Добавляем новое прохождение
+                            const { error: insertError } = await supabase
+                                .from('records')
+                                .insert([{
+                                    level_id: level.id,
+                                    username: submission.username,
+                                    link: submission.videoLink,
+                                    percent: submission.progress,
+                                    hz: hz,
+                                    mobile: submission.completedOnMobile || false
+                                }]);
+
+                            if (insertError) {
+                                console.error('Error inserting record:', insertError);
+                                alert(`Ошибка при добавлении прохождения: ${insertError.message}`);
+                                return;
+                            }
+
+                            alert('Прохождение одобрено и добавлено!');
+                        } else {
+                            alert('Прохождение уже существует в базе данных');
+                        }
+                    }
+                }
+
+                // Обновляем статус заявки
                 const { error } = await supabase
                     .from('submissions')
                     .update({ status: status, updated_at: new Date().toISOString() })
@@ -366,15 +583,17 @@ export default {
                 if (error) {
                     console.error('Error updating submission:', error);
                     alert('Ошибка при обновлении статуса');
-                } else {
-                    // Обновляем локально
-                    const index = this.submissions.findIndex(s => s.id === submissionId);
-                    if (index !== -1) {
-                        this.submissions[index].status = status;
-                    }
+                    return;
+                }
+
+                // Обновляем локально
+                const index = this.submissions.findIndex(s => s.id === submissionId);
+                if (index !== -1) {
+                    this.submissions[index].status = status;
                 }
             } catch (error) {
                 console.error('Error updating submission:', error);
+                alert('Ошибка: ' + error.message);
             }
         },
         async deleteSubmission(submissionId) {
@@ -437,9 +656,71 @@ export default {
         formatDate(timestamp) {
             if (!timestamp) return 'N/A';
             return new Date(timestamp).toLocaleString('ru-RU');
+        },
+        setupRealtime() {
+            // Подписываемся на изменения в таблице submissions
+            realtimeManager.subscribe('submissions', (payload) => {
+                const { eventType, new: newRecord, old: oldRecord } = payload;
+
+                if (eventType === 'INSERT') {
+                    // Новая заявка добавлена
+                    this.submissions.unshift({
+                        id: newRecord.id,
+                        type: newRecord.type,
+                        username: newRecord.username,
+                        videoLink: newRecord.video_link,
+                        levelName: newRecord.level_name,
+                        levelId: newRecord.level_id,
+                        creators: newRecord.creators,
+                        verifier: newRecord.verifier,
+                        password: newRecord.password,
+                        progress: newRecord.progress,
+                        completedOnMobile: newRecord.completed_on_mobile,
+                        comments: newRecord.comments,
+                        status: newRecord.status,
+                        timestamp: newRecord.created_at
+                    });
+                } else if (eventType === 'UPDATE') {
+                    // Заявка обновлена
+                    const index = this.submissions.findIndex(s => s.id === newRecord.id);
+                    if (index !== -1) {
+                        this.submissions[index].status = newRecord.status;
+                    }
+                } else if (eventType === 'DELETE') {
+                    // Заявка удалена
+                    this.submissions = this.submissions.filter(s => s.id !== oldRecord.id);
+                }
+            });
+
+            // Подписываемся на изменения в таблице users
+            realtimeManager.subscribe('users', (payload) => {
+                const { eventType, new: newRecord, old: oldRecord } = payload;
+
+                if (eventType === 'INSERT') {
+                    // Новый пользователь
+                    this.accounts.unshift({
+                        username: newRecord.username,
+                        createdAt: newRecord.created_at
+                    });
+                } else if (eventType === 'DELETE') {
+                    // Пользователь удален
+                    this.accounts = this.accounts.filter(acc => acc.username !== oldRecord.username);
+                } else if (eventType === 'UPDATE') {
+                    // Пользователь обновлен (например, сменил ник)
+                    const index = this.accounts.findIndex(acc => acc.username === oldRecord.username);
+                    if (index !== -1) {
+                        this.accounts[index].username = newRecord.username;
+                    }
+                }
+            });
         }
     },
     mounted() {
         this.checkAuthentication();
-    }
+        this.setupRealtime();
+    },
+    beforeUnmount() {
+        // Отписываемся от всех обновлений при закрытии страницы
+        realtimeManager.unsubscribeAll();
+    },
 };

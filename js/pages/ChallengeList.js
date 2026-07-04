@@ -1,6 +1,7 @@
 import { store } from "../main.js";
 import { embed } from "../util.js";
 import { score } from "../score.js";
+import { fetchList } from "../content.js";
 
 import Spinner from "../components/Spinner.js";
 import LevelAuthors from "../components/List/LevelAuthors.js";
@@ -12,18 +13,6 @@ const roleIconMap = {
     dev: "code",
     trial: "user-lock",
 };
-
-// Fetch challenge list
-async function fetchChallengeList() {
-    try {
-        const response = await fetch('data/challenge_list.json');
-        const data = await response.json();
-        return data.map(level => [level, null]);
-    } catch (err) {
-        console.error('Failed to load challenge list:', err);
-        return [];
-    }
-}
 
 export default {
     components: { Spinner, LevelAuthors },
@@ -118,7 +107,7 @@ export default {
     },
     async mounted() {
         // Hide loading spinner
-        this.list = await fetchChallengeList();
+        this.list = await fetchList('challenge');
 
         // Error handling
         if (!this.list || this.list.length === 0) {

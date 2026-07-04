@@ -1,4 +1,5 @@
 import { embed } from '../util.js';
+import { fetchList } from '../content.js';
 import Spinner from '../components/Spinner.js';
 
 export default {
@@ -46,10 +47,19 @@ export default {
     }),
     async mounted() {
         try {
-            // Add cache busting parameter
-            const timestamp = new Date().getTime();
-            const response = await fetch(`data/future_list.json?v=${timestamp}`);
-            this.levels = await response.json();
+            const list = await fetchList('future');
+            if (list) {
+                this.levels = list.map(([level, err]) => {
+                    if (err) return null;
+                    return {
+                        id: level.id,
+                        name: level.name,
+                        creator: level.author,
+                        verifier: level.verifier,
+                        showcase: level.verification
+                    };
+                }).filter(l => l !== null);
+            }
         } catch (err) {
             console.error('Failed to load future list:', err);
             this.levels = [];
