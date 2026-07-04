@@ -10,6 +10,7 @@ CREATE TABLE IF NOT EXISTS levels (
     password TEXT DEFAULT 'Not Copyable',
     position INTEGER,
     list_type TEXT DEFAULT 'main' CHECK (list_type IN ('main', 'challenge', 'future')),
+    best_progress INTEGER DEFAULT 0,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
