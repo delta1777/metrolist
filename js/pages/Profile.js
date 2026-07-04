@@ -19,17 +19,6 @@ export default {
                             />
                         </div>
 
-                        <div class="form-group">
-                            <label for="email">Email</label>
-                            <input
-                                type="email"
-                                id="email"
-                                v-model="authData.email"
-                                required
-                                placeholder="your@email.com"
-                            />
-                        </div>
-
                         <div class="form-group" v-if="isRegistering">
                             <label for="password">Пароль</label>
                             <input
@@ -70,7 +59,6 @@ export default {
                 <div class="profile-info">
                     <div class="info-card">
                         <h2 class="type-title-lg">{{ userData.username }}</h2>
-                        <p class="type-body">{{ userData.email }}</p>
                     </div>
 
                     <div class="stats-grid">
@@ -161,12 +149,10 @@ export default {
             isRegistering: false,
             authData: {
                 username: '',
-                email: '',
                 password: ''
             },
             userData: {
-                username: '',
-                email: ''
+                username: ''
             },
             userStats: {
                 position: null,
@@ -204,8 +190,8 @@ export default {
                     // Регистрация
                     const users = JSON.parse(localStorage.getItem('users') || '[]');
 
-                    if (users.find(u => u.email === this.authData.email)) {
-                        this.authMessage = 'Пользователь с таким email уже существует';
+                    if (users.find(u => u.username === this.authData.username)) {
+                        this.authMessage = 'Пользователь с таким ником уже существует';
                         this.authError = true;
                         return;
                     }
@@ -213,15 +199,14 @@ export default {
                     const newUser = {
                         id: Date.now().toString(),
                         username: this.authData.username,
-                        email: this.authData.email,
-                        password: this.authData.password, // В реальном проекте нужно хешировать
+                        password: await this.hashPassword(this.authData.password),
                         createdAt: new Date().toISOString()
                     };
 
                     users.push(newUser);
                     localStorage.setItem('users', JSON.stringify(users));
 
-                    this.userData = { username: newUser.username, email: newUser.email };
+                    this.userData = { username: newUser.username };
                     localStorage.setItem('userData', JSON.stringify(this.userData));
                     localStorage.setItem('userId', newUser.id);
 
@@ -230,7 +215,7 @@ export default {
                 } else {
                     // Вход
                     const users = JSON.parse(localStorage.getItem('users') || '[]');
-                    const user = users.find(u => u.email === this.authData.email);
+                    const user = users.find(u => u.username === this.authData.username);
 
                     if (!user) {
                         this.authMessage = 'Пользователь не найден';
@@ -238,7 +223,7 @@ export default {
                         return;
                     }
 
-                    this.userData = { username: user.username, email: user.email };
+                    this.userData = { username: user.username };
                     localStorage.setItem('userData', JSON.stringify(this.userData));
                     localStorage.setItem('userId', user.id);
 
@@ -251,11 +236,18 @@ export default {
                 this.authError = true;
             }
         },
+        async hashPassword(password) {
+            const encoder = new TextEncoder();
+            const data = encoder.encode(password);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        },
         handleLogout() {
             localStorage.removeItem('userData');
             localStorage.removeItem('userId');
             this.isLoggedIn = false;
-            this.userData = { username: '', email: '' };
+            this.userData = { username: '' };
         },
         loadUserData() {
             const userId = localStorage.getItem('userId');
@@ -263,7 +255,7 @@ export default {
 
             // Фильтруем заявки текущего пользователя
             const userSubmissions = submissions.filter(s =>
-                s.userEmail === this.userData.email
+                s.username === this.userData.username
             );
 
             // Разделяем на категории

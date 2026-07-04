@@ -107,7 +107,6 @@ export default {
                             <div class="submission-body">
                                 <h3>{{ submission.levelName }}</h3>
                                 <p><strong>Ник:</strong> {{ submission.username }}</p>
-                                <p><strong>Email:</strong> {{ submission.userEmail }}</p>
                                 <p><strong>Видео:</strong> <a :href="submission.videoLink" target="_blank">{{ submission.videoLink }}</a></p>
 
                                 <template v-if="submission.type === 'level'">
@@ -158,7 +157,7 @@ export default {
                         <input
                             v-model="searchQuery"
                             type="text"
-                            placeholder="Поиск по email или нику..."
+                            placeholder="Поиск по нику..."
                             class="search-input"
                         />
                     </div>
@@ -171,7 +170,6 @@ export default {
                         <table>
                             <thead>
                                 <tr>
-                                    <th>Email</th>
                                     <th>Ник в GD</th>
                                     <th>Дата регистрации</th>
                                     <th>Заявок</th>
@@ -179,20 +177,19 @@ export default {
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr v-for="account in filteredAccounts" :key="account.email">
-                                    <td>{{ account.email }}</td>
-                                    <td>{{ account.gdUsername }}</td>
+                                <tr v-for="account in filteredAccounts" :key="account.username">
+                                    <td>{{ account.username }}</td>
                                     <td>{{ formatDate(account.createdAt) }}</td>
-                                    <td>{{ getAccountSubmissions(account.email) }}</td>
+                                    <td>{{ getAccountSubmissions(account.username) }}</td>
                                     <td>
                                         <button
-                                            v-if="account.email !== currentUserEmail"
-                                            @click="deleteAccount(account.email)"
+                                            v-if="account.username !== currentUsername"
+                                            @click="deleteAccount(account.username)"
                                             class="btn-delete-small"
                                         >
                                             Удалить
                                         </button>
-                                        <span v-else class="admin-badge">Вы</span>
+                                        <span v-else class="admin-badge">Админ</span>
                                     </td>
                                 </tr>
                             </tbody>
@@ -208,7 +205,7 @@ export default {
             configLoaded: false,
             isAuthenticated: false,
             isAdmin: false,
-            currentUserEmail: '',
+            currentUsername: '',
             passwordInput: '',
             loginError: '',
             activeTab: 'submissions',
@@ -240,8 +237,7 @@ export default {
 
             const query = this.searchQuery.toLowerCase();
             return this.accounts.filter(acc =>
-                acc.email.toLowerCase().includes(query) ||
-                acc.gdUsername.toLowerCase().includes(query)
+                acc.username.toLowerCase().includes(query)
             );
         }
     },
@@ -282,11 +278,9 @@ export default {
             this.$router.push('/');
         },
         checkAdminAccess() {
-            const currentUser = localStorage.getItem('userEmail');
-            this.currentUserEmail = currentUser;
-
-            // Проверяем email из конфига
-            this.isAdmin = currentUser === ADMIN_CONFIG.adminEmail;
+            // Если пароль правильный - даём доступ
+            this.isAdmin = true;
+            this.currentUsername = ADMIN_CONFIG.adminUsername;
 
             if (this.isAdmin) {
                 this.loadData();
@@ -309,7 +303,7 @@ export default {
         },
         loadData() {
             this.submissions = JSON.parse(localStorage.getItem('submissions') || '[]');
-            this.accounts = JSON.parse(localStorage.getItem('accounts') || '[]');
+            this.accounts = JSON.parse(localStorage.getItem('users') || '[]');
         },
         updateSubmissionStatus(submissionId, status) {
             const index = this.submissions.findIndex(s => s.id === submissionId);
@@ -324,14 +318,14 @@ export default {
                 localStorage.setItem('submissions', JSON.stringify(this.submissions));
             }
         },
-        deleteAccount(email) {
-            if (confirm(`Вы уверены, что хотите удалить аккаунт ${email}?`)) {
-                this.accounts = this.accounts.filter(acc => acc.email !== email);
-                localStorage.setItem('accounts', JSON.stringify(this.accounts));
+        deleteAccount(username) {
+            if (confirm(`Вы уверены, что хотите удалить аккаунт ${username}?`)) {
+                this.accounts = this.accounts.filter(acc => acc.username !== username);
+                localStorage.setItem('users', JSON.stringify(this.accounts));
             }
         },
-        getAccountSubmissions(email) {
-            return this.submissions.filter(s => s.userEmail === email).length;
+        getAccountSubmissions(username) {
+            return this.submissions.filter(s => s.username === username).length;
         },
         getStatusText(status) {
             const statuses = {

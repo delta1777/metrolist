@@ -198,11 +198,12 @@ export default {
             this.submitError = false;
 
             try {
+                const userData = JSON.parse(localStorage.getItem('userData') || '{}');
                 const submission = {
                     type: this.submitType,
                     timestamp: new Date().toISOString(),
                     ...this.formData,
-                    userEmail: localStorage.getItem('userEmail') || 'anonymous'
+                    username: this.formData.username || userData.username || 'anonymous'
                 };
 
                 // Сохранение заявки

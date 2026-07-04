@@ -22,7 +22,7 @@ jobs:
           cat > js/admin-config.js << EOF
           export const ADMIN_CONFIG = {
               passwordHash: '${{ secrets.ADMIN_PASSWORD_HASH }}',
-              adminEmail: '${{ secrets.ADMIN_EMAIL }}'
+              adminUsername: '${{ secrets.ADMIN_USERNAME }}'
           };
           EOF
 
