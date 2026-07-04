@@ -21,7 +21,7 @@ const app = Vue.createApp({
     data: () => ({ store }),
 });
 const router = VueRouter.createRouter({
-    history: VueRouter.createWebHashHistory(),
+    history: VueRouter.createWebHistory('/metrolist/'),
     routes,
 });
 
