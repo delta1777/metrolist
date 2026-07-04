@@ -16,13 +16,13 @@
     text-align: center;
 }
 
-.submit-type-selector {
+.submit-form {
     display: flex;
-    gap: 1rem;
-    margin-bottom: 2rem;
+    flex-direction: column;
+    gap: 1.5rem;
+    max-width: 800px;
+    margin: 0 auto;
 }
-
-.submit-type-btn {
     flex: 1;
     padding: 1rem;
     border: 2px solid var(--primary);
@@ -44,7 +44,16 @@
     color: white;
 }
 
-.page-submit.dark .submit-type-btn {
+.page-submit.dark .submit-type-selector {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.submit-type-btn {
     color: var(--text-dark);
     border-color: var(--primary-dark);
 }
