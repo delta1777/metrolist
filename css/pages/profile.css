@@ -3,17 +3,19 @@
     padding: 2rem;
     width: 100%;
     min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
 }
 
 /* Auth Styles */
 .auth-container {
+    width: 100%;
+    max-width: 1200px;
     display: flex;
     justify-content: center;
     align-items: center;
     min-height: 70vh;
-    max-width: 1200px;
-    margin: 0 auto;
-    width: 100%;
 }
 
 .auth-form {
@@ -73,7 +75,6 @@
     flex-direction: column;
     gap: 2rem;
     max-width: 1200px;
-    margin: 0 auto;
     width: 100%;
 }
 
