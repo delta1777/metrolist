@@ -18,10 +18,6 @@ js/firebase.js
 supabase-config.js
 js/supabase.js
 
-# EmailJS и другие API ключи
-api-keys.js
-secrets.js
-
 # Конфигурация админ-панели
 admin-config.js
 
