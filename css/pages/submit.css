@@ -27,9 +27,9 @@
 .submit-type-btn {
     flex: 1;
     padding: 1rem;
-    border: 2px solid #ffffff;
+    border: 2px solid #3498db;
     background: transparent;
-    color: #ffffff;
+    color: #3498db;
     border-radius: 8px;
     cursor: pointer;
     font-size: 1rem;
@@ -38,14 +38,15 @@
 }
 
 .submit-type-btn:hover {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(52, 152, 219, 0.1);
 }
 
 .submit-type-btn.active {
-    background: #ffffff;
-    color: #000000;
+    background: #3498db;
+    color: #ffffff;
 }
 
+/* ТЕМНАЯ ТЕМА */
 .page-submit.dark .submit-type-btn {
     border-color: #ffffff;
     color: #ffffff;
@@ -78,9 +79,12 @@
     border: 2px solid #cccccc;
     border-radius: 8px;
     font-size: 1rem;
+    background: #ffffff;
+    color: #000000;
     transition: border-color 0.2s ease;
 }
 
+/* ТЕМНАЯ ТЕМА - поля ввода */
 .page-submit.dark .form-group input,
 .page-submit.dark .form-group textarea {
     background: #1a1a1a;
@@ -112,8 +116,8 @@
 
 .btn-submit {
     padding: 1rem 2rem;
-    background: #ffffff;
-    color: #000000;
+    background: #3498db;
+    color: #ffffff;
     border: none;
     border-radius: 8px;
     font-size: 1rem;
@@ -132,6 +136,7 @@
     cursor: not-allowed;
 }
 
+/* ТЕМНАЯ ТЕМА - кнопка отправить */
 .page-submit.dark .btn-submit {
     background: #ffffff;
     color: #000000;
