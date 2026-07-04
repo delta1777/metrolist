@@ -74,7 +74,8 @@
 }
 
 .form-group input,
-.form-group textarea {
+.form-group textarea,
+.form-group select {
     padding: 0.75rem;
     border: 2px solid #cccccc;
     border-radius: 8px;
@@ -84,12 +85,27 @@
     transition: border-color 0.2s ease;
 }
 
+.form-group select {
+    cursor: pointer;
+}
+
+.form-hint {
+    font-size: 0.875rem;
+    color: #666666;
+    margin-top: 0.25rem;
+}
+
 /* ТЕМНАЯ ТЕМА - поля ввода */
 .page-submit.dark .form-group input,
-.page-submit.dark .form-group textarea {
+.page-submit.dark .form-group textarea,
+.page-submit.dark .form-group select {
     background: #1a1a1a;
     color: #ffffff;
     border-color: #444444;
+}
+
+.page-submit.dark .form-hint {
+    color: #999999;
 }
 
 .form-group textarea {

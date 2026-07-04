@@ -70,6 +70,13 @@ export default {
                     >
                         Аккаунты ({{ accounts.length }})
                     </button>
+                    <button
+                        class="admin-tab-btn"
+                        :class="{ active: activeTab === 'future' }"
+                        @click="activeTab = 'future'"
+                    >
+                        Будущие Уровни ({{ futureLevels.length }})
+                    </button>
                 </div>
 
                 <!-- Заявки -->
@@ -116,6 +123,8 @@ export default {
                                     <p><strong>Создатели:</strong> {{ submission.creators }}</p>
                                     <p><strong>Верификатор:</strong> {{ submission.verifier }}</p>
                                     <p v-if="submission.password"><strong>Пароль:</strong> {{ submission.password }}</p>
+                                    <p><strong>Тип списка:</strong> {{ getListTypeName(submission.listType) }}</p>
+                                    <p v-if="submission.listType === 'future'"><strong>Лучший прогресс:</strong> {{ submission.bestProgress || 0 }}%</p>
                                 </template>
 
                                 <template v-else>
@@ -198,6 +207,78 @@ export default {
                         </table>
                     </div>
                 </div>
+
+                <!-- Будущие Уровни -->
+                <div v-if="activeTab === 'future'" class="admin-section">
+                    <div v-if="futureLevels.length === 0" class="empty-state">
+                        <p>Нет будущих уровней</p>
+                    </div>
+
+                    <div v-else class="future-levels-list">
+                        <div
+                            v-for="level in futureLevels"
+                            :key="level.id"
+                            class="level-card"
+                        >
+                            <div class="level-header">
+                                <h3>{{ level.name }}</h3>
+                                <span class="level-position">Позиция: {{ level.position }}</span>
+                            </div>
+
+                            <div class="level-body">
+                                <p><strong>ID уровня:</strong> {{ level.id }}</p>
+                                <p><strong>Создатель:</strong> {{ level.author }}</p>
+                                <p><strong>Верификатор:</strong> {{ level.verifier }}</p>
+                                <p><strong>Видео:</strong> <a :href="level.verification" target="_blank">{{ level.verification }}</a></p>
+                                <p><strong>Лучший прогресс:</strong> {{ level.best_progress || 0 }}%</p>
+                            </div>
+
+                            <div class="level-actions">
+                                <button
+                                    @click="editFutureLevel(level)"
+                                    class="btn-edit"
+                                >
+                                    Изменить прогресс
+                                </button>
+                                <button
+                                    @click="deleteFutureLevel(level.id)"
+                                    class="btn-delete"
+                                >
+                                    Удалить
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Диалог редактирования будущего уровня -->
+            <div v-if="showEditDialog" class="dialog-overlay" @click="closeEditDialog">
+                <div class="dialog-box" @click.stop>
+                    <h2 class="type-title-lg">Изменить лучший прогресс</h2>
+
+                    <div class="dialog-content">
+                        <p><strong>{{ editingLevel.name }}</strong></p>
+
+                        <div class="form-group">
+                            <label for="edit-progress">Лучший прогресс (%)</label>
+                            <input
+                                type="number"
+                                id="edit-progress"
+                                v-model.number="editData.bestProgress"
+                                min="0"
+                                max="100"
+                                placeholder="Введите лучший прогресс (0-100)"
+                                class="form-input"
+                            />
+                        </div>
+                    </div>
+
+                    <div class="dialog-actions">
+                        <button @click="confirmEdit" class="btn-approve">Сохранить</button>
+                        <button @click="closeEditDialog" class="btn-cancel">Отмена</button>
+                    </div>
+                </div>
             </div>
 
             <!-- Диалог одобрения уровня -->
@@ -229,6 +310,20 @@ export default {
                             />
                             <small>Оставьте пустым для автоматической позиции в конце списка</small>
                         </div>
+
+                        <div v-if="approvalData.listType === 'future'" class="form-group">
+                            <label for="best-progress">Лучший прогресс (%)</label>
+                            <input
+                                type="number"
+                                id="best-progress"
+                                v-model.number="approvalData.bestProgress"
+                                min="0"
+                                max="100"
+                                placeholder="Введите лучший прогресс (0-100)"
+                                class="form-input"
+                            />
+                            <small>Укажите лучший прогресс прохождения для будущего уровня</small>
+                        </div>
                     </div>
 
                     <div class="dialog-actions">
@@ -251,6 +346,7 @@ export default {
             activeTab: 'submissions',
             submissions: [],
             accounts: [],
+            futureLevels: [],
             filterType: 'all',
             filterStatus: 'all',
             searchQuery: '',
@@ -258,7 +354,13 @@ export default {
             currentSubmission: null,
             approvalData: {
                 listType: 'main',
-                position: null
+                position: null,
+                bestProgress: 0
+            },
+            showEditDialog: false,
+            editingLevel: null,
+            editData: {
+                bestProgress: 0
             }
         };
     },
@@ -412,6 +514,8 @@ export default {
                         creators: s.creators,
                         verifier: s.verifier,
                         password: s.password,
+                        listType: s.list_type,
+                        bestProgress: s.best_progress,
                         progress: s.progress,
                         completedOnMobile: s.completed_on_mobile,
                         comments: s.comments,
@@ -434,6 +538,19 @@ export default {
                         createdAt: u.created_at
                     }));
                 }
+
+                // Загружаем будущие уровни
+                const { data: futureLevels, error: futureLevelsError } = await supabase
+                    .from('levels')
+                    .select('*')
+                    .eq('list_type', 'future')
+                    .order('position', { ascending: true });
+
+                if (futureLevelsError) {
+                    console.error('Error loading future levels:', futureLevelsError);
+                } else {
+                    this.futureLevels = futureLevels;
+                }
             } catch (error) {
                 console.error('Error loading data:', error);
             }
@@ -447,8 +564,9 @@ export default {
 
             // Для уровней открываем диалог
             this.currentSubmission = submission;
-            this.approvalData.listType = 'main';
+            this.approvalData.listType = submission.listType || 'main';
             this.approvalData.position = null;
+            this.approvalData.bestProgress = submission.bestProgress || 0;
             this.showApprovalDialog = true;
         },
         closeApprovalDialog() {
@@ -456,6 +574,7 @@ export default {
             this.currentSubmission = null;
             this.approvalData.listType = 'main';
             this.approvalData.position = null;
+            this.approvalData.bestProgress = 0;
         },
         async confirmApproval() {
             if (!this.currentSubmission) return;
@@ -464,12 +583,13 @@ export default {
                 this.currentSubmission.id,
                 'approved',
                 this.approvalData.listType,
-                this.approvalData.position
+                this.approvalData.position,
+                this.approvalData.bestProgress
             );
 
             this.closeApprovalDialog();
         },
-        async updateSubmissionStatus(submissionId, status, listType = 'main', position = null) {
+        async updateSubmissionStatus(submissionId, status, listType = 'main', position = null, bestProgress = 0) {
             const supabase = await getSupabase();
             if (!supabase) return;
 
@@ -526,20 +646,27 @@ export default {
                             }
 
                             // Добавляем новый уровень в базу данных
+                            const levelData = {
+                                id: submission.levelId,
+                                name: submission.levelName,
+                                author: submission.creators,
+                                creators: submission.creators ? submission.creators.split(',').map(c => c.trim()) : [],
+                                verifier: submission.verifier || submission.username,
+                                verification: submission.videoLink,
+                                percent_to_qualify: 100,
+                                password: submission.password || 'Not Copyable',
+                                position: finalPosition,
+                                list_type: listType
+                            };
+
+                            // Для будущих уровней добавляем best_progress
+                            if (listType === 'future') {
+                                levelData.best_progress = bestProgress || 0;
+                            }
+
                             const { error: insertError } = await supabase
                                 .from('levels')
-                                .insert([{
-                                    id: submission.levelId,
-                                    name: submission.levelName,
-                                    author: submission.creators,
-                                    creators: submission.creators ? submission.creators.split(',').map(c => c.trim()) : [],
-                                    verifier: submission.verifier || submission.username,
-                                    verification: submission.videoLink,
-                                    percent_to_qualify: 100,
-                                    password: submission.password || 'Not Copyable',
-                                    position: finalPosition,
-                                    list_type: listType
-                                }]);
+                                .insert([levelData]);
 
                             if (insertError) {
                                 console.error('Error inserting level:', insertError);
@@ -693,6 +820,14 @@ export default {
             };
             return statuses[status] || status;
         },
+        getListTypeName(listType) {
+            const listTypes = {
+                'main': 'Main List (Обычный)',
+                'challenge': 'Challenge List (Челлендж)',
+                'future': 'Future List (Будущий)'
+            };
+            return listTypes[listType] || 'Main List (Обычный)';
+        },
         formatDate(timestamp) {
             if (!timestamp) return 'N/A';
             return new Date(timestamp).toLocaleString('ru-RU');
@@ -753,6 +888,73 @@ export default {
                     }
                 }
             });
+        },
+        editFutureLevel(level) {
+            this.editingLevel = level;
+            this.editData.bestProgress = level.best_progress || 0;
+            this.showEditDialog = true;
+        },
+        closeEditDialog() {
+            this.showEditDialog = false;
+            this.editingLevel = null;
+            this.editData.bestProgress = 0;
+        },
+        async confirmEdit() {
+            if (!this.editingLevel) return;
+
+            const supabase = await getSupabase();
+            if (!supabase) return;
+
+            try {
+                const { error } = await supabase
+                    .from('levels')
+                    .update({ best_progress: this.editData.bestProgress })
+                    .eq('id', this.editingLevel.id);
+
+                if (error) {
+                    console.error('Error updating level:', error);
+                    alert('Ошибка при обновлении уровня');
+                    return;
+                }
+
+                // Обновляем локально
+                const index = this.futureLevels.findIndex(l => l.id === this.editingLevel.id);
+                if (index !== -1) {
+                    this.futureLevels[index].best_progress = this.editData.bestProgress;
+                }
+
+                alert('Лучший прогресс обновлен!');
+                this.closeEditDialog();
+            } catch (error) {
+                console.error('Error updating level:', error);
+                alert('Ошибка: ' + error.message);
+            }
+        },
+        async deleteFutureLevel(levelId) {
+            if (!confirm('Вы уверены, что хотите удалить этот будущий уровень?')) return;
+
+            const supabase = await getSupabase();
+            if (!supabase) return;
+
+            try {
+                const { error } = await supabase
+                    .from('levels')
+                    .delete()
+                    .eq('id', levelId);
+
+                if (error) {
+                    console.error('Error deleting level:', error);
+                    alert('Ошибка при удалении уровня');
+                    return;
+                }
+
+                // Удаляем локально
+                this.futureLevels = this.futureLevels.filter(l => l.id !== levelId);
+                alert('Уровень удален!');
+            } catch (error) {
+                console.error('Error deleting level:', error);
+                alert('Ошибка: ' + error.message);
+            }
         }
     },
     mounted() {

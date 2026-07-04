@@ -606,3 +606,86 @@
     background: var(--bg-1);
 }
 
+/* Будущие уровни */
+.future-levels-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.level-card {
+    background: var(--bg-3);
+    padding: 1.5rem;
+    border-radius: 10px;
+    border-left: 4px solid var(--primary);
+    transition: all 0.2s;
+}
+
+.level-card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.level-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--border);
+}
+
+.level-header h3 {
+    margin: 0;
+    font-size: 1.3rem;
+    color: var(--primary);
+}
+
+.level-position {
+    padding: 0.25rem 0.75rem;
+    background: var(--bg-1);
+    border-radius: 6px;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.level-body p {
+    margin-bottom: 0.5rem;
+    line-height: 1.5;
+}
+
+.level-body a {
+    color: var(--primary);
+    text-decoration: none;
+    word-break: break-all;
+}
+
+.level-body a:hover {
+    text-decoration: underline;
+}
+
+.level-actions {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 1rem;
+}
+
+.level-actions button {
+    flex: 1;
+    padding: 0.75rem;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.95rem;
+    transition: all 0.2s;
+}
+
+.btn-edit {
+    background: var(--primary);
+    color: white;
+}
+
+.btn-edit:hover {
+    opacity: 0.9;
+}
+

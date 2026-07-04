@@ -48,6 +48,7 @@ export async function fetchList(listType = 'main') {
                         verification: level.verification,
                         percentToQualify: level.percent_to_qualify,
                         password: level.password,
+                        best_progress: level.best_progress,
                         records: records.map(r => ({
                             user: r.username,
                             link: r.link,

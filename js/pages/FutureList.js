@@ -56,7 +56,8 @@ export default {
                         name: level.name,
                         creator: level.author,
                         verifier: level.verifier,
-                        showcase: level.verification
+                        showcase: level.verification,
+                        progress: level.best_progress || 0
                     };
                 }).filter(l => l !== null);
             }

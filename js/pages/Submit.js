@@ -52,6 +52,18 @@ export default {
                     <!-- Поля для отправки уровня -->
                     <template v-if="submitType === 'level'">
                         <div class="form-group">
+                            <label for="listType">Тип уровня</label>
+                            <select id="listType" v-model="formData.listType" required class="form-select">
+                                <option value="main">Обычный уровень (Main List)</option>
+                                <option value="challenge">Челлендж уровень (Challenge List)</option>
+                                <option value="future">Будущий уровень (Future List)</option>
+                            </select>
+                            <small class="form-hint">
+                                Будущий уровень - это уровень, который еще не верифицирован, но на нем уже есть прогрессы
+                            </small>
+                        </div>
+
+                        <div class="form-group">
                             <label for="levelName">Название уровня</label>
                             <input
                                 type="text"
@@ -103,6 +115,20 @@ export default {
                                 v-model="formData.password"
                                 placeholder="Пароль или 'Not Copyable'"
                             />
+                        </div>
+
+                        <div v-if="formData.listType === 'future'" class="form-group">
+                            <label for="bestProgress">Лучший прогресс</label>
+                            <input
+                                type="text"
+                                id="bestProgress"
+                                v-model="formData.bestProgress"
+                                placeholder="100% или 80-100%"
+                                pattern="^(\d+%|\d+-\d+%)$"
+                            />
+                            <small class="form-hint">
+                                Укажите лучший прогресс: просто число с % (например, 100%) или диапазон (например, 80-100% для стартпоса)
+                            </small>
                         </div>
                     </template>
 
@@ -183,6 +209,8 @@ export default {
                 creators: '',
                 verifier: '',
                 password: '',
+                listType: 'main',
+                bestProgress: '',
                 progress: 100,
                 completedOnMobile: false,
                 comments: ''
@@ -220,6 +248,8 @@ export default {
                     verifier: sanitizeHTML(this.formData.verifier || ''),
                     comments: sanitizeHTML(this.formData.comments || ''),
                     type: this.submitType,
+                    listType: this.formData.listType || 'main',
+                    bestProgress: this.formData.bestProgress || '',
                     levelId: this.formData.levelId,
                     progress: this.formData.progress,
                     completedOnMobile: this.formData.completedOnMobile
@@ -250,6 +280,12 @@ export default {
                     submissionData.creators = sanitizedData.creators;
                     submissionData.verifier = sanitizedData.verifier;
                     submissionData.password = this.formData.password || null;
+                    submissionData.list_type = sanitizedData.listType;
+
+                    // Для будущих уровней добавляем best_progress
+                    if (sanitizedData.listType === 'future') {
+                        submissionData.best_progress = sanitizedData.bestProgress;
+                    }
                 } else {
                     submissionData.progress = parseInt(sanitizedData.progress);
                     submissionData.completed_on_mobile = sanitizedData.completedOnMobile;
@@ -295,6 +331,8 @@ export default {
                 creators: '',
                 verifier: '',
                 password: '',
+                listType: 'main',
+                bestProgress: 0,
                 progress: 100,
                 completedOnMobile: false,
                 comments: ''
