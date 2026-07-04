@@ -43,7 +43,7 @@
 
 .submit-type-btn.active {
     background: #3498db;
-    color: #ffffff;
+    color: #000000;
 }
 
 /* ТЕМНАЯ ТЕМА */
@@ -117,7 +117,7 @@
 .btn-submit {
     padding: 1rem 2rem;
     background: #3498db;
-    color: #ffffff;
+    color: #000000;
     border: none;
     border-radius: 8px;
     font-size: 1rem;
