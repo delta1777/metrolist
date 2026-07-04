@@ -9,24 +9,13 @@ node_modules/
 .env.local
 .env.*.local
 
-# Firebase конфигурация
-firebase-config.js
-firebaseConfig.js
-js/firebase.js
-
 # Supabase конфигурация
 supabase-config.js
 js/supabase-config.js
 
 # Конфигурация админ-панели
 admin-config.js
-
-# Локальные данные пользователей (если используется файловая БД)
-data/users.json
-data/submissions.json
-data/accounts.json
-database.json
-db.json
+js/admin-config.js
 
 # Логи и временные файлы
 *.log
