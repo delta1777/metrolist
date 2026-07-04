@@ -6,6 +6,11 @@
     display: flex;
     justify-content: center;
     align-items: flex-start;
+    background: var(--background);
+}
+
+.page-profile.dark {
+    background: var(--background-dark);
 }
 
 /* Auth Styles */
