@@ -8,10 +8,13 @@ export default {
         Spinner,
     },
     data: () => ({
-        leaderboard: [],
+        mainLeaderboard: [],
+        challengeLeaderboard: [],
         loading: true,
         selected: 0,
-        err: [],
+        activeTab: 'main',
+        mainErr: [],
+        challengeErr: [],
     }),
     template: `
         <main v-if="loading">
@@ -19,6 +22,22 @@ export default {
         </main>
         <main v-else class="page-leaderboard-container">
             <div class="page-leaderboard">
+                <div class="leaderboard-tabs">
+                    <button
+                        class="leaderboard-tab-btn"
+                        :class="{ active: activeTab === 'main' }"
+                        @click="switchTab('main')"
+                    >
+                        Main List
+                    </button>
+                    <button
+                        class="leaderboard-tab-btn"
+                        :class="{ active: activeTab === 'challenge' }"
+                        @click="switchTab('challenge')"
+                    >
+                        Challenge List
+                    </button>
+                </div>
                 <div class="error-container">
                     <p class="error" v-if="err.length > 0">
                         Таблица лидеров может быть неточной, так как следующие уровни не удалось загрузить: {{ err.join(', ') }}
@@ -93,18 +112,32 @@ export default {
         </main>
     `,
     computed: {
+        leaderboard() {
+            return this.activeTab === 'main' ? this.mainLeaderboard : this.challengeLeaderboard;
+        },
+        err() {
+            return this.activeTab === 'main' ? this.mainErr : this.challengeErr;
+        },
         entry() {
             return this.leaderboard[this.selected];
         },
     },
     async mounted() {
-        const [leaderboard, err] = await fetchLeaderboard();
-        this.leaderboard = leaderboard;
-        this.err = err;
-        // Hide loading spinner
+        const [mainLeaderboard, mainErr] = await fetchLeaderboard('main');
+        const [challengeLeaderboard, challengeErr] = await fetchLeaderboard('challenge');
+
+        this.mainLeaderboard = mainLeaderboard;
+        this.mainErr = mainErr;
+        this.challengeLeaderboard = challengeLeaderboard;
+        this.challengeErr = challengeErr;
+
         this.loading = false;
     },
     methods: {
         localize,
+        switchTab(tab) {
+            this.activeTab = tab;
+            this.selected = 0;
+        }
     },
 };

@@ -5,7 +5,7 @@
     height: 100%;
     display: grid;
     grid-template-columns: minmax(24rem, 2fr) 3fr;
-    grid-template-rows: max-content 1fr;
+    grid-template-rows: max-content max-content 1fr;
     column-gap: 2rem;
     max-width: 80rem;
     margin: 0 auto;
@@ -13,8 +13,45 @@
 .page-leaderboard > div {
     overflow-y: auto;
 }
-.page-leaderboard .error-container {
+.page-leaderboard .leaderboard-tabs {
     grid-row: 1;
+    grid-column: 1 / span 2;
+    display: flex;
+    gap: 1rem;
+    padding: 2rem 1rem 0;
+}
+.page-leaderboard .leaderboard-tab-btn {
+    flex: 1;
+    padding: 1rem 2rem;
+    background: var(--color-background);
+    color: #000000;
+    border: 2px solid transparent;
+    border-radius: var(--border-radius);
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+    box-shadow: var(--shadow-sm);
+}
+main.dark .page-leaderboard .leaderboard-tab-btn {
+    color: #f5f5f5;
+}
+.page-leaderboard .leaderboard-tab-btn:hover {
+    background: var(--color-background-hover);
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+}
+.page-leaderboard .leaderboard-tab-btn.active {
+    background: var(--color-primary);
+    color: #000000;
+    border-color: var(--color-primary);
+    box-shadow: var(--shadow-lg);
+}
+main.dark .page-leaderboard .leaderboard-tab-btn.active {
+    color: white;
+}
+.page-leaderboard .error-container {
+    grid-row: 2;
     grid-column: 1 / span 2;
 }
 .page-leaderboard .error-container .error {
@@ -27,7 +64,7 @@
 }
 .page-leaderboard .board-container,
 .page-leaderboard .player-container {
-    grid-row: 2;
+    grid-row: 3;
     padding-block: 2rem;
 }
 .page-leaderboard .board-container {
