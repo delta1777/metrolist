@@ -244,3 +244,14 @@ main.dark .page-leaderboard .board tr:nth-child(2) .rank p {
 main.dark .page-leaderboard .board tr:nth-child(3) .rank p {
     color: #CD7F32 !important;
 }
+
+/* Submit page buttons exceptions - black text on white background */
+main.dark .page-submit .submit-type-btn.active,
+main.dark .page-submit .submit-type-btn.active * {
+    color: #000000 !important;
+}
+
+main.dark .page-submit .btn-submit,
+main.dark .page-submit .btn-submit * {
+    color: #000000 !important;
+}

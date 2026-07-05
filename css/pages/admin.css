@@ -115,8 +115,8 @@
 }
 
 .admin-container {
-    max-width: 100%;
-    margin: 0 auto;
+    width: 100%;
+    margin: 0;
     padding: 0 2rem;
 }
 
@@ -135,7 +135,8 @@
     display: flex;
     gap: 1rem;
     margin-bottom: 2rem;
-    justify-content: center;
+    justify-content: flex-start;
+    width: 100%;
 }
 
 .admin-tab-btn {

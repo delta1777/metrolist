@@ -53,8 +53,8 @@
 }
 
 .page-submit.dark .submit-type-btn.active {
-    background: #ffffff;
-    color: #000000;
+    background: #ffffff !important;
+    color: #000000 !important;
 }
 
 .submit-form {
@@ -154,8 +154,8 @@
 
 /* ТЕМНАЯ ТЕМА - кнопка отправить */
 .page-submit.dark .btn-submit {
-    background: #ffffff;
-    color: #000000;
+    background: #ffffff !important;
+    color: #000000 !important;
 }
 
 .submit-message {
